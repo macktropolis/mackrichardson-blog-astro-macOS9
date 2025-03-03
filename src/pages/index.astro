@@ -117,6 +117,12 @@ const title = "Home";
 </main>
 
 <style>
+	@media screen and (min-width: 1024px) {
+		main {
+			grid-template-columns: 33% 1fr;
+			margin: 0 0 0 1rem;
+		}
+	}
 	#subgrid {
 		display: grid;
 		grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
