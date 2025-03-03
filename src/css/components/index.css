@@ -13,12 +13,14 @@ main {
     width: 90%;
 }
 
+/*
 @media screen and (min-width: 1024px) {
     main {
         grid-template-columns: 33% 1fr;
         margin: 0 0 0 1rem;
     }
 }
+*/
 
 /* = = = = = = = = = = = = = 
 Columns
