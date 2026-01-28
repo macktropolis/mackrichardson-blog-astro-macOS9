@@ -229,11 +229,13 @@ const postURL = url + "/blog/" + post.slug;
     z-index: 10;
   }
 
+  @supports not (display: grid-lanes) {
   main {
     columns: unset;
     margin: 0;
     width: 100%;
   }
+}
   .card__content > article > header {
     border-bottom: 2px solid hsl(var(--color-dark), 1);
     display: grid;
