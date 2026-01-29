@@ -234,17 +234,11 @@ const postURL = url + "/blog/" + post.slug;
     width: 95%;
     z-index: 10;
   }
-
   main {
     display: block;
+    columns: unset;
     margin: 0;
     width: 100%;
-  }
-
-  @supports not (display: grid-lanes) {
-    main {
-      columns: unset;
-    }
   }
   .card__content > article > header {
     border-bottom: 2px solid hsl(var(--color-dark), 1);
