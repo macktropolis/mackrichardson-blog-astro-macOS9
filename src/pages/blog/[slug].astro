@@ -64,7 +64,8 @@ const postURL = url + "/blog/" + post.slug;
   title={title}
   description={description}
   page={category}
-  postURL={postURL}>
+  postURL={postURL}
+>
   <div id="slug">
     <main id="slug__post">
       <div class="card__wrapper">
@@ -141,7 +142,8 @@ const postURL = url + "/blog/" + post.slug;
                     title="Share on Facebook"
                     target="_blank"
                     rel="noopener"
-                    class="button">
+                    class="button"
+                  >
                     <img src="/assets/images/facebook.png" alt="" /> Share on Facebook
                   </a>
                   <a
@@ -154,7 +156,8 @@ const postURL = url + "/blog/" + post.slug;
                     title="Share on X / Twitter"
                     class="button"
                     target="_blank"
-                    rel="noopener">
+                    rel="noopener"
+                  >
                     <img src="/assets/images/twitter.png" alt="" /> Share on X/Twitter
                   </a>
                   <a
@@ -169,7 +172,8 @@ const postURL = url + "/blog/" + post.slug;
                     title="Share on LinkedIn"
                     class="button"
                     target="_blank"
-                    rel="noopener">
+                    rel="noopener"
+                  >
                     <img src="/assets/images/linkedin.png" alt="" /> Share on LinkedIn
                   </a>
                   <a
@@ -182,7 +186,8 @@ const postURL = url + "/blog/" + post.slug;
                     title="Share on Pinterest"
                     class="button"
                     target="_blank"
-                    rel="noopener">
+                    rel="noopener"
+                  >
                     <img src="/assets/images/pinterest.png" alt="" /> Share on Pinterest
                   </a>
                   <a
@@ -197,7 +202,8 @@ const postURL = url + "/blog/" + post.slug;
                     title="Share via Email"
                     target="_blank"
                     class="button"
-                    rel="noopener">
+                    rel="noopener"
+                  >
                     <img src="/assets/images/mail.png" alt="" /> Share via Email
                   </a>
                 </section>
@@ -214,7 +220,7 @@ const postURL = url + "/blog/" + post.slug;
       </div><!-- end: .card-wrapper -->
     </main>
     <aside class="related">
-      <Comments />
+      <!-- <Comments /> -->
       <!-- <RelatedPosts {relatedPosts} /> -->
     </aside>
   </div>
@@ -229,13 +235,17 @@ const postURL = url + "/blog/" + post.slug;
     z-index: 10;
   }
 
-  @supports not (display: grid-lanes) {
   main {
-    columns: unset;
+    display: block;
     margin: 0;
     width: 100%;
   }
-}
+
+  @supports not (display: grid-lanes) {
+    main {
+      columns: unset;
+    }
+  }
   .card__content > article > header {
     border-bottom: 2px solid hsl(var(--color-dark), 1);
     display: grid;
@@ -265,7 +275,7 @@ const postURL = url + "/blog/" + post.slug;
     display: grid;
     font-size: clamp(4ch, 5ch, 7ch);
     height: 100%;
-    line-height: 90%;
+    line-height: 120%;
     margin: 0 !important;
     padding: 1rem 2rem;
     pointer-events: none;
@@ -394,6 +404,16 @@ const postURL = url + "/blog/" + post.slug;
   .share a {
     margin: 0;
   }
+
+  @media screen and (min-width: 900px) {
+    #slug {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: min(100ch, 100%);
+    }
+  }
+  /*
   @media screen and (min-width: 900px) {
     #slug {
       display: flex;
@@ -415,4 +435,6 @@ const postURL = url + "/blog/" + post.slug;
       top: 3rem;
     }
   }
+*/
+
 </style>

@@ -60,7 +60,13 @@ const description =
 
   <style>
     main {
-      columns: unset;
+      display: block;
+    }
+    
+    @supports not (display: grid-lanes) {
+      main {
+        columns: unset;
+      }
     }
     div.card.christmas {
       align-self: inherit;

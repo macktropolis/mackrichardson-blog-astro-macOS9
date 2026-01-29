@@ -36,6 +36,12 @@ const showCount = uniqueSortedCategories.map(
 ---
 
 <ul class="categories submenu">
+  <li>
+    <a class="badge" href="/blog/"
+      ><span class="icon">&nbsp;</span>All Blog Articles</a
+    >
+  </li>
+  <li><hr /></li>
   {
     Object.entries(processedCats).map(([key, val]) => (
       <li>

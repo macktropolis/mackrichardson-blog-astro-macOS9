@@ -156,7 +156,7 @@ Cards
 }
 .card__content h2 {
     font-size: clamp(2ch, 3ch, 4ch);
-    line-height: 100%;
+    line-height: 130%;
     position: relative;
     z-index: 1;
   }
@@ -344,11 +344,11 @@ Hero Image
     box-shadow: 8px 8px 0 hsl(var(--color-dark), 0.5);
     display: block;
     height: 100%;
-    max-height: 200px;
+    max-height: 300px;
     width: 100%;
     object-fit: cover;
     object-position: 50%;
-    filter: grayscale(100%);
+    filter: grayscale(25%);
     pointer-events: all;
 }
 #slug__post .hero-image img {
@@ -525,10 +525,19 @@ ul.picker {
 Listicle Styles
 = = = = = = = = = = = = = */
 section.listicle-item h3 {
+    display: flex;
+    align-items: start;
     font-size: clamp(2rem, 3rem, 3.5rem);
-    text-align: center;
+    line-height: auto;
+    padding: 0;
+    text-align: left;
+}
+section.listicle-item:nth-child(even) h3 {
+    flex-direction: row-reverse;
+    text-align: right;
 }
 section.listicle-item h3 > strong {
+    aspect-ratio: 1 / 1;
     background-color: hsl(var(--color-dark), 1);
     border-radius: 100%;
     color: hsl(var(--color-light), 1);
@@ -536,13 +545,18 @@ section.listicle-item h3 > strong {
     font-family: var(--font-serif);
     font-size: clamp(2rem, 2.5rem, 3rem);
     font-weight: bolder;
-    margin-right: 0.5rem;
+    margin-right: 1rem;
     margin-bottom: -1rem;
     overflow: hidden;
     padding: 0 1.25rem;
     position: relative;
 }
-section.listicle-item:nth-child(odd) h3 > strong {
+section.listicle-item:nth-child(even) h3 > strong {
+    margin-right: 0;
+    margin-left: 1rem;
+}
+
+section.listicle-item:nth-child(even) h3 > strong {
     color: hsl(var(--color-light), 1) !important;
     text-shadow: 2px 2px 0 hsl(var(--color-dark), 1);
 }

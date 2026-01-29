@@ -14,10 +14,10 @@
     --gradient-color-2: 214, 91%, 74%;
     --gradient-color-3: 246, 97%, 85%;
 
-    --font-sans: 'CheckboxFLF', sans-serif;
+    --font-sans: 'checkbox', sans-serif;
     --font-sans-alt: 'Geneva', 'Gill Sans', sans-serif;
-    --font-serif: 'Apple Garamond', sans-serif;
-    --font-serif-light: 'Apple Garamond Light', sans-serif;
+    --font-serif: 'advercase', sans-serif;
+    --font-serif-bold: 'advercase-bold', sans-serif;
     --font-mono: monospace;
     
     --wallpaper-christmas: url('/assets/images/holiday-cards/alpine.jpg');

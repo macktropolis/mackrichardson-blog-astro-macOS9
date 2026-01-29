@@ -3,11 +3,27 @@
 @import url('https://fonts.googleapis.com/css2?family=Mountains+of+Christmas:wght@400;700&display=swap');
 
 @font-face {
-    font-family: 'CheckboxFLF';
+    font-family: 'checkbox';
     src:url('/assets/fonts/CheckboxFLF.ttf.woff') format('woff'),
         url('/assets/fonts/CheckboxFLF.ttf.svg#CheckboxFLF') format('svg'),
         url('/assets/fonts/CheckboxFLF.ttf.eot'),
         url('/assets/fonts/CheckboxFLF.ttf.eot?#iefix') format('embedded-opentype'); 
     font-weight: normal;
     font-style: normal;
+}
+@font-face {
+    font-family: 'advercase-bold';
+    src: url('/assets/fonts/advercasefont-bold-webfont.woff2') format('woff2'),
+         url('/assets/fonts/advercasefont-bold-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+
+}
+@font-face {
+    font-family: 'advercase';
+    src: url('/assets/fonts/advercasefont-regular-webfont.woff2') format('woff2'),
+         url('/assets/fonts/advercasefont-regular-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+
 }
