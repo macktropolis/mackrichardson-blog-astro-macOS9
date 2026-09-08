@@ -4,7 +4,7 @@ date: 2022-05-02
 author: Mack Richardson
 image:
   {
-    src: "/assets/images/blog/2022-05-02-micro-toy-boxes/md-microtoyboxes.jpg",
+    src: "../../assets/blog/retro-mini-toy-boxes.jpg",
     alt: "Micro Toy Boxes",
   }
 description: Let's have a look at some mini toy boxes that'll make you nostalgic for 70s and 80s toys. Oh, yeah...and they are magnets too.

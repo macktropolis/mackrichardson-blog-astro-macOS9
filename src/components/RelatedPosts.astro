@@ -18,8 +18,8 @@ const limitedRelatedPosts = relatedPosts.slice(0, 3);
   limitedRelatedPosts.length > 0 && (
     <>
       {limitedRelatedPosts.map(
-        (post: { data: { tags: string[] }; slug: string }) => (
-          <PostCard data={post.data} url={post.slug} tagType="h2" />
+        (post: { data: { tags: string[] }; id: string }) => (
+          <PostCard data={post.data} url={post.id} tagType="h2" />
         ),
       )}
     </>

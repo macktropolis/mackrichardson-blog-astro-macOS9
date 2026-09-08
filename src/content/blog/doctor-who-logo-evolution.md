@@ -4,7 +4,7 @@ date: 2024-11-05
 author: "Mack Richardson"
 image:
   {
-    src: "/assets/images/blog/2024-11-05-regeneration-of-a-logo/doctors.png",
+    src: "../../assets/blog/doctor-who-logo-evolution.png",
     alt: "The Doctors Who",
     class: "",
   }

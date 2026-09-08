@@ -64,7 +64,7 @@ const description = "Articles tagged with '" + tagName + "'";
     />
     {
       posts.map((post) => (
-        <PostCard data={post.data} url={post.slug} tagType="h2" />
+        <PostCard data={post.data} url={post.id} tagType="h2" />
       ))
     }
   </main>

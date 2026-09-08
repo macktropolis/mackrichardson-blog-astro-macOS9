@@ -30,7 +30,7 @@ const title = "Home";
 	<Hero title={author} description={description} />
 	{
 		formattedPosts.map((post) => (
-			<PostCard data={post.data} url={post.slug} tagType="h3" />
+			<PostCard data={post.data} url={post.id} tagType="h3" />
 		))
 	}
 </main>

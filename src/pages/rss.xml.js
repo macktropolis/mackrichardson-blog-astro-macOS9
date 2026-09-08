@@ -1,5 +1,6 @@
 import rss from '@astrojs/rss';
 import { getCollection } from 'astro:content';
+import { slugify } from '../js/utils';
 
 export async function GET(context) {
   const blog = await getCollection('blog');
@@ -11,9 +12,8 @@ export async function GET(context) {
       title: post.data.title,
       pubDate: post.data.date,
       description: post.data.description,
-      // Compute RSS link from post `id`
-      // This example assumes all posts are rendered as `/blog/[id]` routes
-      link: `/blog/${post.id.replace('.md', '')}/`,
+      // Match Astro's lowercased /blog/[slug] route (glob loader ids keep filename case)
+      link: `/blog/${slugify(post.id)}/`,
     })),
   });
 }

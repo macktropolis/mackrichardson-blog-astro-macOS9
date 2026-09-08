@@ -4,7 +4,7 @@ date: 2022-04-03
 author: Mack Richardson
 image:
   {
-    src: "/assets/images/blog/2022-04-03-lets-go-toy-hunting-at-chesters-collectibles/chesters-collectibles.jpg",
+    src: "../../assets/blog/toy-hunting-at-chesters-collectibles.jpg",
     alt: "Toy Hunting at Chester's Collectibles",
     class: "top tall",
   }

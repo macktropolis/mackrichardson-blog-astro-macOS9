@@ -4,7 +4,7 @@ date: 2022-05-06
 author: "Mack Richardson"
 image:
   {
-    src: "/assets/images/blog/2022-05-06-mackdaddy-mail-haul-1/md-mailhaul01.jpg",
+    src: "../../assets/blog/unboxing-toys-2022-05.jpg",
     alt: "MackDaddy Mail Haul #1",
   }
 description: It's time to unbox some toys!

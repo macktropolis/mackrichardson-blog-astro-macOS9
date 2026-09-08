@@ -4,7 +4,7 @@ date: 2023-08-08
 author: Mack Richardson
 image:
   {
-    src: "/assets/images/blog/2023-08-08-improving-new-feature-deployment-with-feature-flags/flags.jpg",
+    src: "../../assets/blog/feature-flags-in-filemaker.jpg",
     alt: "",
   }
 description: Discover the power of feature flags, a dynamic technique that empowers developers to control specific functionalities within applications with ease.

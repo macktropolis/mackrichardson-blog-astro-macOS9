@@ -74,7 +74,7 @@ const categorySlug = slugify(categoryName);
     }
     {
       posts.map((post) => (
-        <PostCard data={post.data} url={post.slug} tagType="h2" />
+        <PostCard data={post.data} url={post.id} tagType="h2" />
       ))
     }
   </main>

@@ -4,7 +4,7 @@ date: 2024-10-25
 author: "Mack Richardson"
 image:
   {
-    src: "/assets/images/blog/2024-10-31-top-5-iron-man-armors/tony-stark-armors.webp",
+    src: "../../assets/blog/top-5-iron-man-armors.webp",
     alt: "",
   }
 description: "My favorite armors from the the Golden Avenger's long comic book history."
