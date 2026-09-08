@@ -1,6 +1,6 @@
 ---
 //  library imports
-import { getCollection, type CollectionEntry } from "astro:content";
+import { getCollection, render, type CollectionEntry } from "astro:content";
 import { Image } from "astro:assets";
 
 //  data imports
@@ -24,7 +24,7 @@ export async function getStaticPaths() {
   const formattedPosts = formatBlogPosts(allPosts);
   //@ts-ignore
   return formattedPosts.map((post) => ({
-    params: { slug: post.slug },
+    params: { slug: post.id },
     props: {
       post,
     },
@@ -40,7 +40,7 @@ const { post } = Astro.props;
 const { title, description, date, category, tags, author, image } = post.data;
 const { url } = site;
 
-const { Content } = await post.render();
+const { Content } = await render(post);
 
 const allPosts = await getCollection("blog");
 const formattedPosts = formatBlogPosts(allPosts, {
@@ -57,7 +57,7 @@ const relatedPosts = formattedPosts
 // Replace "specific-tag" with the tag you want to check
 
 const categoryTitle = "More Article Categories";
-const postURL = url + "/blog/" + post.slug;
+const postURL = url + "/blog/" + post.id;
 ---
 
 <Layout
@@ -138,7 +138,7 @@ const postURL = url + "/blog/" + post.slug;
                     href={`https://www.facebook.com/sharer/sharer.php?u=` +
                       url +
                       "/blog/" +
-                      post.slug}
+                      post.id}
                     title="Share on Facebook"
                     target="_blank"
                     rel="noopener"
@@ -150,7 +150,7 @@ const postURL = url + "/blog/" + post.slug;
                     href={`https://x.com/intent/tweet?url=` +
                       url +
                       "/blog/" +
-                      post.slug +
+                      post.id +
                       `&text=` +
                       description}
                     title="Share on X / Twitter"
@@ -164,7 +164,7 @@ const postURL = url + "/blog/" + post.slug;
                     href={`https://www.linkedin.com/shareArticle?mini=true&url=` +
                       url +
                       "/blog/" +
-                      post.slug +
+                      post.id +
                       `&title=` +
                       title +
                       `&summary=` +
@@ -180,7 +180,7 @@ const postURL = url + "/blog/" + post.slug;
                     href={`https://pinterest.com/pin/create/button/?url=` +
                       url +
                       "/blog/" +
-                      post.slug +
+                      post.id +
                       `&description=` +
                       description}
                     title="Share on Pinterest"
@@ -198,7 +198,7 @@ const postURL = url + "/blog/" + post.slug;
                       `%20` +
                       url +
                       "/blog/" +
-                      post.slug}
+                      post.id}
                     title="Share via Email"
                     target="_blank"
                     class="button"

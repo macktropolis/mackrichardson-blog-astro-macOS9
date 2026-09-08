@@ -43,7 +43,7 @@ const description = "I write about comics, coding and everything in between.";
     {
       // @ts-ignore
       page.data.map((post) => (
-        <PostCard data={post.data} url={post.slug} tagType="h2" />
+        <PostCard data={post.data} url={post.id} tagType="h2" />
       ))
     }
   </main>
