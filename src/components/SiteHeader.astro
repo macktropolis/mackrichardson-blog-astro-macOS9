@@ -48,7 +48,9 @@ const { author } = site;
         <li><a href="#popup4" title="">Privacy Policy</a></li>
         <li><hr /></li>
         <li class="info">
-          &copy; {new Date().getFullYear()}. {author}. All Rights Reserved.
+          &copy; <span id="copyright-year">{new Date().getFullYear()}</span>. {
+            author
+          }. All Rights Reserved.
         </li>
       </ul>
     </li><!-- end: Help -->
@@ -59,6 +61,13 @@ const { author } = site;
     </li>
   </ul>
 </header>
+
+<script is:inline>
+  // The build-time year above is the no-JS fallback; keep it current for
+  // long-lived tabs / infrequently rebuilt deploys.
+  var y = document.getElementById("copyright-year");
+  if (y) y.textContent = new Date().getFullYear();
+</script>
 
 <style is:global>
   img.filter-green {

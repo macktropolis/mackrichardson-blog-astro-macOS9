@@ -4,7 +4,7 @@ Guidance for working in this repository.
 
 ## Project
 
-Mack Richardson's personal website (`mackrichardson.com`) — an Astro 5 **static** site
+Mack Richardson's personal website (`mackrichardson.com`) — an Astro **static** site
 with a Mac OS 9 / "Mackintosh desktop" visual theme. Personal blog covering FileMaker,
 web development, comics, sci-fi books, and retro toys. Internal package name `mack-os`.
 
@@ -61,8 +61,12 @@ Blog post frontmatter (enforced by `src/content.config.ts`):
 
 - `title` (string), `date` (date), `author` (enum — only `"Mack Richardson"`)
 - `image: { src, alt, class? }` — `src` is `image()` (Content Layer helper). The hero
-  file lives in `src/assets/blog/<post-slug>.<ext>` and the frontmatter path is
-  relative (`../../assets/blog/<post-slug>.<ext>`), so `<Image>` optimizes it.
+  file lives in `src/assets/blog/` (named per post slug; a couple of generic shots are
+  shared, e.g. `code.jpg`) and the frontmatter path is relative
+  (`../../assets/blog/…`), so `<Image>` fingerprints and optimizes it. `<Image>` is
+  passed `widths` + `sizes` (no fixed `height`) so the `.hero-image` CSS in
+  `src/css/components/index.css` keeps framing via `object-fit` / `object-position`
+  (the `class` field: `top`, `bottom`, `top tall`, …).
   Images used **inside** post bodies stay in `public/assets/images/blog/…` and are
   referenced with absolute `/assets/…` paths (raw `<img>`, unoptimized).
 - `description` (string, **max 160 chars**)

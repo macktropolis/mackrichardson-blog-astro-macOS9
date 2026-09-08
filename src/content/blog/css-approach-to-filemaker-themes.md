@@ -4,7 +4,7 @@ date: 2023-02-08
 author: "Mack Richardson"
 image:
   {
-    src: "../../assets/blog/css-approach-to-fileMaker-themes.jpg",
+    src: "../../assets/blog/code.jpg",
     alt: "",
   }
 description: "FileMaker Themes and a CSS-inspired naming system streamline UI design, making layouts consistent, scalable, and easier to maintain."

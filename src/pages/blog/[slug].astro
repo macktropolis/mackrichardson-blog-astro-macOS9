@@ -57,7 +57,9 @@ const relatedPosts = formattedPosts
 // Replace "specific-tag" with the tag you want to check
 
 const categoryTitle = "More Article Categories";
-const postURL = url + "/blog/" + post.id;
+// Astro serves the route lowercased; keep every emitted URL in sync with it.
+const postSlug = slugify(post.id);
+const postURL = url + "/blog/" + postSlug;
 ---
 
 <Layout
@@ -121,8 +123,8 @@ const postURL = url + "/blog/" + post.id;
                     src={image.src}
                     alt={image.alt}
                     class={image.class}
-                    width="400"
-                    height="250"
+                    widths={[640, 1024, 2048]}
+                    sizes="(min-width: 1024px) 1024px, 100vw"
                     format="webp"
                     quality={80}
                   />
@@ -138,7 +140,7 @@ const postURL = url + "/blog/" + post.id;
                     href={`https://www.facebook.com/sharer/sharer.php?u=` +
                       url +
                       "/blog/" +
-                      post.id}
+                      postSlug}
                     title="Share on Facebook"
                     target="_blank"
                     rel="noopener"
@@ -150,7 +152,7 @@ const postURL = url + "/blog/" + post.id;
                     href={`https://x.com/intent/tweet?url=` +
                       url +
                       "/blog/" +
-                      post.id +
+                      postSlug +
                       `&text=` +
                       description}
                     title="Share on X / Twitter"
@@ -164,7 +166,7 @@ const postURL = url + "/blog/" + post.id;
                     href={`https://www.linkedin.com/shareArticle?mini=true&url=` +
                       url +
                       "/blog/" +
-                      post.id +
+                      postSlug +
                       `&title=` +
                       title +
                       `&summary=` +
@@ -180,7 +182,7 @@ const postURL = url + "/blog/" + post.id;
                     href={`https://pinterest.com/pin/create/button/?url=` +
                       url +
                       "/blog/" +
-                      post.id +
+                      postSlug +
                       `&description=` +
                       description}
                     title="Share on Pinterest"
@@ -198,7 +200,7 @@ const postURL = url + "/blog/" + post.id;
                       `%20` +
                       url +
                       "/blog/" +
-                      post.id}
+                      postSlug}
                     title="Share via Email"
                     target="_blank"
                     class="button"

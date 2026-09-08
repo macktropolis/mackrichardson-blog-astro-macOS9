@@ -65,8 +65,8 @@ const { title, date, author, image, description, category, tags } = data;
                 src={image.src}
                 alt={image.alt}
                 class={image.class}
-                width="400"
-                height="250"
+                widths={[560, 1120]}
+                sizes="(min-width: 768px) 560px, 100vw"
                 format="webp"
                 quality={80}
               />

@@ -4,7 +4,7 @@ date: 2024-12-17
 author: "Mack Richardson"
 image:
   {
-    src: "../../assets/blog/apple-intelligence-animated-border.jpg",
+    src: "../../assets/blog/code.jpg",
     alt: "Code",
   }
 description: "Add an animated, colorful border to your UI for a futuristic touch!"
