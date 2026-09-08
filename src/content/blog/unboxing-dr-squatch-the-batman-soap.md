@@ -4,7 +4,7 @@ date: 2022-03-29
 author: Mack Richardson
 image:
   {
-    src: "/assets/images/blog/2022-03-29-smells-like-justice-unboxing-dr-squatchs-the-batman-soap-set/md-batman-soap.jpg",
+    src: "../../assets/blog/unboxing-dr-squatch-the-batman-soap.jpg",
     alt: "",
   }
 description: I take a quick look (and sniff) at Dr. Squatch's The Batman Limited Edition soap set.

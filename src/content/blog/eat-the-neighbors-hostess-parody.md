@@ -4,7 +4,7 @@ date: 2024-10-31
 author: Mack Richardson
 image:
   {
-    src: "/assets/images/blog/marvel-zombies-eat-the-neighbors.jpg",
+    src: "../../assets/blog/eat-the-neighbors-hostess-parody.jpg",
     alt: "Marvel Zombies Eat the Neighbors",
     class: "tall bottom",
   }

@@ -4,7 +4,7 @@ date: 2024-12-20
 author: "Mack Richardson"
 image:
   {
-    src: "/assets/images/blog/npm-business-card.jpg",
+    src: "../../assets/blog/npm-business-card.jpg",
     alt: "A NPM business card in the terminal",
   }
 description: "A super cool terminal business card to impress your friends and colleagues."

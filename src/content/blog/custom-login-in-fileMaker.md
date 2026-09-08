@@ -4,7 +4,7 @@ date: 2023-04-05
 author: Mack Richardson
 image:
   {
-    src: "/assets/images/blog/2023-04-05-crafting-visually-striking-and-customizable-login-for-fileMaker/login.jpg",
+    src: "../../assets/blog/custom-login-in-fileMaker.jpg",
     alt: "",
   }
 description: Build a flexible login routine that can be themed to fit the UI for any solution, and also provide useful information and feedback to the user.

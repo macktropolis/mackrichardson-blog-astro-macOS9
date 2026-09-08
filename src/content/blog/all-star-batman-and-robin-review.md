@@ -4,7 +4,7 @@ date: 2024-11-20
 author: "Mack Richardson"
 image:
   {
-    src: "/assets/images/blog/2024-11-20-all-star-batman-and-robin-retrospective/all-star-batman.webp",
+    src: "../../assets/blog/all-star-batman-and-robin-review.webp",
     alt: "",
     class: "tall top",
   }

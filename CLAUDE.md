@@ -60,7 +60,11 @@ Blog collection uses the **Content Layer API**: `defineCollection` with a
 Blog post frontmatter (enforced by `src/content.config.ts`):
 
 - `title` (string), `date` (date), `author` (enum — only `"Mack Richardson"`)
-- `image: { src, alt, class? }`
+- `image: { src, alt, class? }` — `src` is `image()` (Content Layer helper). The hero
+  file lives in `src/assets/blog/<post-slug>.<ext>` and the frontmatter path is
+  relative (`../../assets/blog/<post-slug>.<ext>`), so `<Image>` optimizes it.
+  Images used **inside** post bodies stay in `public/assets/images/blog/…` and are
+  referenced with absolute `/assets/…` paths (raw `<img>`, unoptimized).
 - `description` (string, **max 160 chars**)
 - `draft` (bool, default false), `mackdaddy` (bool, default false)
 - `category` (enum): `Coding`, `Comics`, `FileMaker`, `MackDaddy Fun & Games`,

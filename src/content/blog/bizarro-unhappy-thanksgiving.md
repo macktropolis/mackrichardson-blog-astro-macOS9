@@ -4,7 +4,7 @@ date: 2024-11-28
 author: "Mack Richardson"
 image:
   {
-    src: "/assets/images/blog/bizarro-thanksgiving.jpg",
+    src: "../../assets/blog/bizarro-unhappy-thanksgiving.jpg",
     alt: "",
     class: "top",
   }

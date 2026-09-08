@@ -4,7 +4,7 @@ date: 2022-06-10
 author: Mack Richardson
 image:
   {
-    src: "/assets/images/blog/2022-06-10-a-hot-toy-hunt-on-a-hot-summer-day/ragnarok.jpg",
+    src: "../../assets/blog/hot-toy-find-on-a-hot-summer-day.jpg",
     alt: "Marvel Legends Ragnarok Action Figure",
     class: "top tall",
   }

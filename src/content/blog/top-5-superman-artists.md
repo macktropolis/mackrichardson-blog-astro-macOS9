@@ -4,7 +4,7 @@ date: 2024-11-24
 author: "Mack Richardson"
 image:
   {
-    src: "/assets/images/blog/2024-11-24-top-5-superman-artists/superbattle.jpg",
+    src: "../../assets/blog/top-5-superman-artists.jpg",
     alt: "",
     class: "",
   }
