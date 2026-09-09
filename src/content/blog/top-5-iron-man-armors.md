@@ -8,7 +8,7 @@ image:
     alt: "",
   }
 description: "My favorite armors from the the Golden Avenger's long comic book history."
-draft: false
+draft: true
 category: Comics
 tags: ["marvel comics", "iron man"]  # Add tags here
 ---

@@ -9,7 +9,7 @@ image:
     class: "tall bottom",
   }
 description: Get into the Halloween spirit with a ghoulishly fun parody of the iconic Hostess comic book ads of the '70s & '80s! 🎃
-draft: false
+draft: true
 category: Comics
 tags: ["marvel", "hostess", "marvel zombies", "halloween"]  # Add tags here
 ---
