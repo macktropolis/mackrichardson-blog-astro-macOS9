@@ -1,9 +1,11 @@
 import rss from '@astrojs/rss';
 import { getCollection } from 'astro:content';
-import { slugify } from '../js/utils';
+import { slugify, formatBlogPosts } from '../js/utils';
 
 export async function GET(context) {
-  const blog = await getCollection('blog');
+  // formatBlogPosts drops drafts + future-dated posts and sorts newest-first,
+  // matching what actually gets built under /blog/[slug].
+  const blog = formatBlogPosts(await getCollection('blog'));
   return rss({
     title: 'Mack Richardson’s Blog',
     description: 'Mack Richardson writes about filemaker, web development, comics, toys and more...',

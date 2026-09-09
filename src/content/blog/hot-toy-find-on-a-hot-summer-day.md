@@ -9,7 +9,7 @@ image:
     class: "top tall",
   }
 description: The mercury is creeping near 100 degrees but a quick pop in to Target nets an even HOTTER Marvel Legends figure.
-draft: false
+draft: true
 category: MackDaddy Fun & Games
 tags: ["collectibles", "toys"]  # Add tags here
 ---

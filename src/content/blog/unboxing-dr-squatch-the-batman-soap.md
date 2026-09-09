@@ -8,7 +8,7 @@ image:
     alt: "",
   }
 description: I take a quick look (and sniff) at Dr. Squatch's The Batman Limited Edition soap set.
-draft: false
+draft: true
 category: MackDaddy Fun & Games
 tags: ["batman", "collectibles"]  # Add tags here
 ---
