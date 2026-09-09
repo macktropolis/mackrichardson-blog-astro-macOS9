@@ -71,8 +71,8 @@ Blog post frontmatter (enforced by `src/content.config.ts`):
   referenced with absolute `/assets/…` paths (raw `<img>`, unoptimized).
 - `description` (string, **max 160 chars**)
 - `draft` (bool, default false), `mackdaddy` (bool, default false)
-- `category` (enum): `Coding`, `Comics`, `FileMaker`, `MackDaddy Fun & Games`,
-  `Retro Gaming`, `Sci-Fi`, `Random Fun`, `Tech`, `Toys`
+- `category` (enum): `Coding`, `Comics`, `Design`, `FileMaker`, `MackDaddy Fun & Games`,
+  `Retro Gaming`, `Random Fun`, `Tech`, `Toys`
 - `tags` (string array, optional)
 
 `formatBlogPosts()` filters out drafts and future-dated posts and sorts by date

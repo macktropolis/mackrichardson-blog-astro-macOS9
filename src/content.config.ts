@@ -24,10 +24,10 @@ const blog = defineCollection({
       category: z.enum([
         "Coding",
         "Comics",
+        "Design",
         "FileMaker",
         "MackDaddy Fun & Games",
         "Retro Gaming",
-        "Sci-Fi",
         "Random Fun",
         "Tech",
         "Toys",

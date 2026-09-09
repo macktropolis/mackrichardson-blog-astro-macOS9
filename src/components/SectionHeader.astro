@@ -110,14 +110,14 @@ const categorySlug = slugify(category);
     background-image: url("/assets/images/backgrounds/rpg.jpg");
     background-size: cover;
   }
-  .card__content.sci-fi {
-    background-image: url("/assets/images/backgrounds/sci-fi.jpg");
+  .card__content.design {
+    background-image: url("/assets/images/backgrounds/halftone-magenta.gif");
     background-size: cover;
     background-position: center;
   }
   .card__content.coding:before,
   .card__content.comics:before,
-  .card__content.sci-fi:before,
+  .card__content.design:before,
   .card__content.random-fun:before {
     content: "";
     background-color: hsl(var(--color-dark), 0.5);
@@ -129,9 +129,9 @@ const categorySlug = slugify(category);
   }
   .card__content.coding h1,
   .card__content.comics h1,
+  .card__content.design h1,
   .card__content.filemaker h1,
   .card__content.random-fun h1,
-  .card__content.sci-fi h1,
   .card__content.tags h1 {
     color: hsl(var(--color-light), 1);
   }
