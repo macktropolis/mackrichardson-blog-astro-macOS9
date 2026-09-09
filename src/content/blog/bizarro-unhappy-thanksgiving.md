@@ -9,7 +9,7 @@ image:
     class: "top",
   }
 description: "Unhappy and unsafe Thanksgiving wishes from Bizarro World! 🦃🍁🍽️"
-draft: false
+draft: true
 category: "Random Fun"
 tags: ["dc comics", "bizarro", "thanksgiving", "holiday fun"]  # Add tags here
 ---
