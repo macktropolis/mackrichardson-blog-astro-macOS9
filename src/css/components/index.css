@@ -561,7 +561,13 @@ section.listicle-item:nth-child(even) h3 > strong {
     text-shadow: 2px 2px 0 hsl(var(--color-dark), 1);
 }
 section.listicle-item h3 > :where(em, i) {
-    font-size: 1.25ch;
+    font-size: 0.5em;
+    margin-left: 1.25rem;
+    opacity: 0.75;
+}
+section.listicle-item:nth-child(even) h3 > :where(em, i) {
+    margin-left: 0;
+    margin-right: 1.25rem;
 }
 section.listicle-item h5 {
     font-size: 1.25ch !important;
