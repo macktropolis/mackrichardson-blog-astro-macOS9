@@ -71,6 +71,58 @@
     </div>
 </div>
 
+<script>
+    // Classic Mac desktop behavior for the media icons: a single click selects
+    // the icon, a double click (or a second click on an already-selected icon)
+    // opens it. Mouse only -- touch devices keep single-tap-to-open, and
+    // keyboard activation (Enter) still opens directly.
+    const media = document.querySelector<HTMLElement>(".media");
+
+    if (media && window.matchMedia("(pointer: fine)").matches) {
+        const items = Array.from(media.querySelectorAll<HTMLElement>(".hd"));
+
+        const clearSelection = () =>
+            items.forEach((hd) => hd.classList.remove("selected"));
+
+        const open = (a: HTMLAnchorElement) => {
+            const href = a.getAttribute("href");
+            if (!href) return;
+            if (href.startsWith("#") || a.target !== "_blank") {
+                window.location.href = href;
+            } else {
+                window.open(href, "_blank", "noopener");
+            }
+        };
+
+        items.forEach((hd) => {
+            const a = hd.querySelector<HTMLAnchorElement>("a");
+            if (!a) return;
+
+            a.addEventListener("click", (event) => {
+                // Keyboard-triggered clicks report detail 0 -- let them through
+                // so Enter still opens the link.
+                if (event.detail === 0) return;
+
+                event.preventDefault();
+                const wasSelected = hd.classList.contains("selected");
+                clearSelection();
+
+                if (event.detail >= 2 || wasSelected) {
+                    open(a);
+                } else {
+                    hd.classList.add("selected");
+                }
+            });
+        });
+
+        document.addEventListener("click", (event) => {
+            if (event.target instanceof Node && !media.contains(event.target)) {
+                clearSelection();
+            }
+        });
+    }
+</script>
+
 <style>
     div.media {
         display: block;
@@ -110,6 +162,13 @@
         top: 26px;
         width: 12px;
         z-index: 1;
+    }
+    div.media div.hd.selected p {
+        background-color: hsl(var(--color-selection), 1);
+        color: hsl(var(--color-light), 1);
+    }
+    div.media div.hd.selected img:not(.shortcut) {
+        filter: brightness(0.7) contrast(1.1);
     }
 
     @media screen and (max-width: 900px) {
