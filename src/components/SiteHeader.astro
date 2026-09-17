@@ -33,11 +33,11 @@ const { author } = site;
       </ul>
     </li><!-- end: Share -->
     <li>
-      <a href="#">Related</a>
+      <a href="#">Web Ring</a>
       <ul class="submenu">
         <SpecialLinks />
       </ul>
-    </li><!-- end: Related -->
+    </li><!-- end: Web Ring -->
     <li>
       <a href="#">Categories</a>
       <CategoryCloud />
@@ -168,6 +168,10 @@ const { author } = site;
   }
   .site__nav .submenu li.info {
     padding: 0.5rem 1rem !important;
+  }
+  .site__nav .submenu li.active > a {
+    background-color: hsl(var(--color-selection), 1);
+    color: hsl(var(--color-light), 1);
   }
   .site__nav .submenu li a {
     display: flex;
