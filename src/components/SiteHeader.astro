@@ -9,10 +9,6 @@ import SpecialLinks from "./Nav-SpecialLinks.astro";
 // data imports
 import * as site from "../data/site.json";
 
-// utils imports
-import { slugify } from "../js/utils";
-
-const { page } = Astro.props;
 const { author } = site;
 ---
 
@@ -54,11 +50,7 @@ const { author } = site;
         </li>
       </ul>
     </li><!-- end: Help -->
-    <li id="site-loc">
-      <!-- <img src="/assets/images/finder.png" alt=""> -->
-      <span class={`icon ${slugify(page)}`}>&nbsp;</span>
-      {page}
-    </li>
+    <li id="site-clock" aria-live="off"></li>
   </ul>
 </header>
 
@@ -67,6 +59,24 @@ const { author } = site;
   // long-lived tabs / infrequently rebuilt deploys.
   var y = document.getElementById("copyright-year");
   if (y) y.textContent = new Date().getFullYear();
+
+  // Classic Mac menu-bar clock. There's no meaningful no-JS fallback for a
+  // live clock on a static site, so the element just stays empty without JS.
+  var clock = document.getElementById("site-clock");
+  if (clock) {
+    var updateClock = function () {
+      var now = new Date();
+      var month = String(now.getMonth() + 1).padStart(2, "0");
+      var day = String(now.getDate()).padStart(2, "0");
+      var date = month + "/" + day + "/" + now.getFullYear();
+      var hours = now.getHours() % 12 || 12;
+      var minutes = String(now.getMinutes()).padStart(2, "0");
+      var ampm = now.getHours() >= 12 ? "PM" : "AM";
+      clock.textContent = date + " " + hours + ":" + minutes + " " + ampm;
+    };
+    updateClock();
+    setInterval(updateClock, 1000 * 15);
+  }
 </script>
 
 <style is:global>
@@ -187,26 +197,20 @@ const { author } = site;
     position: relative;
     width: 16px;
   }
-  .site__nav #site-loc {
+  .site__nav #site-clock {
     align-items: center;
     display: flex;
     font-size: 0.75rem;
-    gap: 0.5rem;
     height: 100%;
     margin-left: auto;
     padding: 0 1rem;
     position: relative;
     text-wrap: nowrap;
   }
-  #site-loc > img,
-  #site-loc > .icon {
-    height: 24px !important;
-    width: 24px !important;
+  #site-clock:empty {
+    display: none;
   }
-  #site-loc > .icon {
-    background-size: 90%;
-  }
-  #site-loc::before {
+  #site-clock::before {
     background: url("/assets/images/dot-separator.png") no-repeat 50%;
     content: "";
     height: 100%;
@@ -215,7 +219,7 @@ const { author } = site;
     width: 15px;
   }
   @media only screen and (max-width: 700px) {
-    #site-loc {
+    #site-clock {
       opacity: 0;
       width: 0;
     }
