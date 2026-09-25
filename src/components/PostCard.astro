@@ -42,6 +42,12 @@ const { title, date, author, image, description, category, tags } = data;
         width="28"
         class="control collapse"
       />
+      <a href="#" class="button post-close" aria-label="Close">&nbsp;</a>
+      <a
+        href={`/blog/${slugify(url)}`}
+        class="button expand"
+        aria-label={`Read ${title}`}>&nbsp;</a
+      >
     </header>
 
     <section class="card__content">
@@ -101,8 +107,23 @@ const { title, date, author, image, description, category, tags } = data;
 </div><!-- end: .card-wrapper -->
 
 <style>
-  .post .control {
+  .post .control.expand {
+    opacity: 1 !important;
+  }
+  .card__wrapper {
+    transition:
+      opacity 0.25s ease,
+      transform 0.25s ease;
+  }
+  .card__wrapper.closing {
     opacity: 0;
+    pointer-events: none;
+    transform: scale(0.85);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .card__wrapper {
+      transition: none;
+    }
   }
   p {
     font-size: clamp(1rem, 1.1rem, 1.2rem);
@@ -151,3 +172,23 @@ const { title, date, author, image, description, category, tags } = data;
     color: hsl(var(--color-light), 1) !important;
   }
 </style>
+
+<script>
+  // Click the close box on a post card to dismiss it, like closing a window.
+  // Client-side only -- the post comes back on reload. Event-delegated on
+  // document since Astro renders one PostCard per post on listing pages.
+  document.addEventListener("click", (event) => {
+    const target = event.target;
+    if (!(target instanceof Element)) return;
+
+    const closeLink = target.closest(".post-close");
+    if (!closeLink) return;
+
+    event.preventDefault();
+    const wrapper = closeLink.closest(".card__wrapper");
+    if (!wrapper) return;
+
+    wrapper.classList.add("closing");
+    setTimeout(() => wrapper.remove(), 250);
+  });
+</script>
