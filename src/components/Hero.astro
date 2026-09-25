@@ -39,6 +39,7 @@ const headerTitle = "MackOS";
         width="28"
         class="control collapse"
       />
+      <a href="#" class="button hero-close" aria-label="Close">&nbsp;</a>
     </header>
 
     <section class="card__content">
@@ -64,8 +65,20 @@ const headerTitle = "MackOS";
 </div><!-- end: .card-wrapper -->
 
 <style>
-  .control {
+  .card__wrapper {
+    transition:
+      opacity 0.25s ease,
+      transform 0.25s ease;
+  }
+  .card__wrapper.closing {
     opacity: 0;
+    pointer-events: none;
+    transform: scale(0.85);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .card__wrapper {
+      transition: none;
+    }
   }
   .card__content article {
     display: flow-root;
@@ -97,3 +110,22 @@ const headerTitle = "MackOS";
     margin-inline: auto;
   }
 </style>
+
+<script>
+  // Click the close box to dismiss the MackOS 9.0 card, like closing a
+  // window. Client-side only -- it comes back on reload.
+  document.addEventListener("click", (event) => {
+    const target = event.target;
+    if (!(target instanceof Element)) return;
+
+    const closeLink = target.closest(".hero-close");
+    if (!closeLink) return;
+
+    event.preventDefault();
+    const wrapper = closeLink.closest(".card__wrapper");
+    if (!wrapper) return;
+
+    wrapper.classList.add("closing");
+    setTimeout(() => wrapper.remove(), 250);
+  });
+</script>
