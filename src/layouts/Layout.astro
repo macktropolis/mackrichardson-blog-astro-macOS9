@@ -3,6 +3,8 @@ import BaseHead from "../components/BaseHead.astro";
 import SiteHeader from "../components/SiteHeader.astro";
 import BaseEnd from "../components/BaseEnd.astro";
 import Media from "../components/Media.astro";
+import ControlStrip from "../components/ControlStrip.astro";
+import WindowManager from "../components/WindowManager.astro";
 import About from "../components/Popup-About.astro";
 import HolidayCards from "../components/Popup-HolidayCards.astro";
 import CategoryList from "../components/CategoryPicker.astro";
@@ -29,6 +31,7 @@ const url = Astro.url.pathname;
 
 	<body class={categorySlug ?? ""}>
 		<Media />
+		<ControlStrip />
 		<slot />
 	</body><BaseEnd />
 
@@ -44,6 +47,7 @@ const url = Astro.url.pathname;
 	<div id="popup4" class="popup">
 		<Privacy />
 	</div>
+	<WindowManager />
 	<!-- <Snow /> -->
 	<script
 		id="dsq-count-scr"

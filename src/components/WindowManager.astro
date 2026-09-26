@@ -1,0 +1,221 @@
+---
+// Lightweight desktop-style window manager for the popups (About, Holiday
+// Cards, Mackintosh HD, Privacy) and any other element opted in via
+// .wm-drag (currently just the Hero "MackOS 9.0" card).
+//
+// Popups keep their existing markup and href="#popup1".."#popup4" trigger
+// links everywhere on the site -- this just intercepts clicks on those
+// links (and a hashchange fallback for the Media.astro sidebar icons,
+// which navigate via window.location.href on their own select/activate
+// gesture) instead of relying on :target, so several can be open at once,
+// each independently draggable and z-stacked. Each popup's own close
+// anchor (the invisible <a class="button"> overlaying the close box) is
+// rewired the same way, closing just that window instead of clearing the
+// URL hash.
+---
+
+<style is:global>
+  .popup .card__header,
+  .wm-drag .card__header {
+    cursor: grab;
+  }
+</style>
+
+<script>
+  let topZ = 1000;
+
+  function bringToFront(win: HTMLElement) {
+    topZ += 1;
+    win.style.zIndex = String(topZ);
+  }
+
+  // A position:fixed box with only `left` set (no `right`) and an
+  // auto/fit-content width isn't just sized to its content -- the
+  // shrink-to-fit algorithm treats the distance from `left` to the
+  // viewport's right edge as the available width, so the box narrows as
+  // `left` grows. Freezing an explicit pixel width the first time a window
+  // is positioned (measured while it's still unconstrained) stops it from
+  // resizing itself as it's centered or dragged.
+  function freezeWidth(win: HTMLElement) {
+    if (win.style.width) return;
+    win.style.width = `${win.getBoundingClientRect().width}px`;
+  }
+
+  function centerWindow(win: HTMLElement, cascade: number) {
+    freezeWidth(win);
+    const rect = win.getBoundingClientRect();
+    const offset = cascade * 24;
+    const left = Math.max(16, (window.innerWidth - rect.width) / 2 + offset);
+    const top = Math.max(16, (window.innerHeight - rect.height) / 2 + offset);
+    win.style.left = `${left}px`;
+    win.style.top = `${top}px`;
+  }
+
+  function makeDraggable(win: HTMLElement) {
+    const handle = win.querySelector<HTMLElement>(".card__header");
+    if (!handle) return;
+
+    handle.addEventListener("pointerdown", (event) => {
+      if (!(event.target instanceof Element)) return;
+      // Let the close/expand overlay anchors handle their own click
+      // instead of starting a drag.
+      if (event.target.closest("a.button")) return;
+      if (event.button !== 0) return;
+
+      bringToFront(win);
+
+      freezeWidth(win);
+      const startRect = win.getBoundingClientRect();
+      win.style.position = "fixed";
+      win.style.left = `${startRect.left}px`;
+      win.style.top = `${startRect.top}px`;
+      win.style.margin = "0";
+
+      const startX = event.clientX;
+      const startY = event.clientY;
+      const origLeft = startRect.left;
+      const origTop = startRect.top;
+
+      const onMove = (moveEvent: PointerEvent) => {
+        win.style.left = `${origLeft + moveEvent.clientX - startX}px`;
+        win.style.top = `${origTop + moveEvent.clientY - startY}px`;
+      };
+      const onUp = () => {
+        window.removeEventListener("pointermove", onMove);
+        window.removeEventListener("pointerup", onUp);
+      };
+      window.addEventListener("pointermove", onMove);
+      window.addEventListener("pointerup", onUp, { once: true });
+    });
+  }
+
+  // -- Popups: open/close by id, several can be open at once ---------------
+
+  const popups = Array.from(document.querySelectorAll<HTMLElement>(".popup"));
+
+  // Other components (the Control Strip) listen for this to keep their own
+  // "is this window open" indicator in sync, however the window was
+  // opened or closed.
+  function announce(id: string, isOpen: boolean) {
+    window.dispatchEvent(
+      new CustomEvent("wm:popup-toggle", { detail: { id, isOpen } }),
+    );
+  }
+
+  function openPopup(popup: HTMLElement) {
+    if (!popup.classList.contains("is-open")) {
+      popup.classList.add("is-open");
+      if (!popup.dataset.positioned) {
+        const openCount = popups.filter((p) =>
+          p.classList.contains("is-open"),
+        ).length;
+        centerWindow(popup, openCount - 1);
+        popup.dataset.positioned = "true";
+      }
+      announce(popup.id, true);
+    }
+    bringToFront(popup);
+  }
+
+  function closePopup(popup: HTMLElement) {
+    if (!popup.classList.contains("is-open")) return;
+    popup.classList.remove("is-open");
+    announce(popup.id, false);
+  }
+
+  // Open if closed; close if already open, regardless of which window is
+  // currently frontmost.
+  function togglePopupById(id: string) {
+    const popup = document.getElementById(id);
+    if (!popup || !popup.classList.contains("popup")) return;
+    if (popup.classList.contains("is-open")) {
+      closePopup(popup);
+    } else {
+      openPopup(popup);
+    }
+  }
+
+  popups.forEach((popup) => {
+    makeDraggable(popup);
+
+    const closeLink = popup.querySelector<HTMLAnchorElement>(
+      ".card__header > a.button:not(.expand)",
+    );
+    closeLink?.addEventListener("click", (event) => {
+      event.preventDefault();
+      closePopup(popup);
+    });
+
+    popup.addEventListener("pointerdown", () => bringToFront(popup));
+  });
+
+  // Any link to #popup1..4 toggles that window instead of navigating --
+  // except inside .media, which has its own select/double-click gesture
+  // and falls through to the hashchange handler below once it activates.
+  document.addEventListener("click", (event) => {
+    if (!(event.target instanceof Element)) return;
+    const link = event.target.closest<HTMLAnchorElement>('a[href^="#popup"]');
+    if (!link || link.closest(".media")) return;
+
+    event.preventDefault();
+    togglePopupById(link.getAttribute("href")!.slice(1));
+  });
+
+  function handlePopupHash() {
+    const id = location.hash.slice(1);
+    if (/^popup\d$/.test(id)) {
+      togglePopupById(id);
+      history.replaceState(null, "", location.pathname + location.search);
+    }
+  }
+  window.addEventListener("hashchange", handlePopupHash);
+  handlePopupHash();
+
+  // -- Anything else opted into dragging (e.g. the Hero card) ---------------
+
+  document.querySelectorAll<HTMLElement>(".wm-drag").forEach((win) => {
+    makeDraggable(win);
+    win.addEventListener("pointerdown", () => bringToFront(win));
+  });
+
+  // -- #hero-window: "open if closed", not a toggle -------------------------
+  //
+  // Hero.astro's own close box adds the "closing" class (fading it out and
+  // leaving it in the DOM rather than removing it); nothing else removes
+  // that class again to bring it back except this. Unlike the popup
+  // triggers above, clicking one of these links always ensures the window
+  // is open and frontmost -- it never closes an already-open window.
+  //
+  // #hero-window only exists on the homepage, but the links that open it
+  // (Control Strip, Apple menu) are sitewide, so they point at the
+  // absolute /#hero-window. On the homepage itself that's handled in
+  // place below (no navigation); from anywhere else the browser actually
+  // navigates there, and handleHeroHash picks it up once that page loads.
+  function openHeroWindow(hero: HTMLElement) {
+    hero.classList.remove("closing");
+    bringToFront(hero);
+  }
+
+  document.addEventListener("click", (event) => {
+    if (!(event.target instanceof Element)) return;
+    const link = event.target.closest<HTMLAnchorElement>(
+      'a[href="/#hero-window"]',
+    );
+    if (!link) return;
+
+    const hero = document.getElementById("hero-window");
+    if (!hero) return; // not on the homepage -- let it navigate there
+
+    event.preventDefault();
+    openHeroWindow(hero);
+  });
+
+  function handleHeroHash() {
+    if (location.hash !== "#hero-window") return;
+    const hero = document.getElementById("hero-window");
+    if (hero) openHeroWindow(hero);
+    history.replaceState(null, "", location.pathname + location.search);
+  }
+  window.addEventListener("hashchange", handleHeroHash);
+  handleHeroHash();
+</script>

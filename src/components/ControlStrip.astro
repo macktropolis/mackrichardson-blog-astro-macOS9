@@ -1,0 +1,184 @@
+---
+// Mac OS 9 Control Strip: a compact, collapsible sitewide launcher for the
+// window popups, plus a real link to the blog. It reuses the exact
+// href="#popup1".."#popup4" convention WindowManager.astro already listens
+// for -- these are the same links used elsewhere (the Help menu's Privacy
+// Policy link, the media sidebar icons), just restyled as strip modules.
+// WindowManager toggles the window and announces the change; this
+// component only listens for that announcement to keep each module's
+// pressed/active look in sync.
+//
+// "About Mack" is the odd one out: it opens the MackOS 9.0 window
+// (#hero-window) rather than the About popup, and isn't a toggle -- it
+// always ensures the window is open, so it has no `popup` id to sync an
+// active state against.
+// Alphabetized by title.
+const items = [
+  {
+    href: "/#hero-window",
+    title: "About Mack",
+    icon: "/assets/images/m-logo.png",
+  },
+  {
+    href: "/blog/",
+    title: "Blog",
+    icon: "/assets/images/book-red.png",
+  },
+  {
+    popup: "popup2",
+    href: "#popup2",
+    title: "Holiday Cards",
+    icon: "/assets/images/christmas-tree.png",
+  },
+  {
+    popup: "popup3",
+    href: "#popup3",
+    title: "Mackintosh HD",
+    icon: "/assets/images/hard-drive.png",
+  },
+];
+---
+
+<nav class="control-strip" aria-label="Control Strip">
+  <div class="control-strip__items">
+    {
+      items.map((item) => (
+        <a
+          href={item.href}
+          class="control-strip__item"
+          data-popup={item.popup}
+          title={item.title}
+        >
+          <img src={item.icon} alt="" />
+          <span class="control-strip__label">{item.title}</span>
+        </a>
+      ))
+    }
+  </div>
+  <button
+    type="button"
+    class="control-strip__tab"
+    aria-label="Collapse Control Strip"
+    aria-expanded="true">
+    <span class="control-strip__tab-arrow" aria-hidden="true"></span>
+  </button>
+</nav>
+
+<style>
+  .control-strip {
+    align-items: stretch;
+    background-color: hsl(var(--color-mid), 1);
+    border-radius: 0;
+    bottom: 0;
+    box-shadow:
+      0 0 0 1px hsl(var(--color-dark), 1),
+      inset -1px -1px 0 1px hsl(var(--color-dark), 0.25),
+      inset 1px 1px 0 2px hsl(var(--color-light), 0.5),
+      2px 2px 6px hsl(var(--color-dark), 0.35);
+    display: flex;
+    left: 0;
+    position: fixed;
+    z-index: 999999;
+  }
+  .control-strip__tab {
+    all: unset;
+    align-items: center;
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    padding: 0;
+  }
+  .control-strip__tab-arrow {
+    border-bottom: 5px solid transparent;
+    border-right: 6px solid hsl(var(--color-dark), 1);
+    border-top: 5px solid transparent;
+    display: block;
+    height: 0;
+    margin: 0 8px;
+    width: 0;
+  }
+  .control-strip.collapsed .control-strip__tab-arrow {
+    border-left: 6px solid hsl(var(--color-dark), 1);
+    border-right: none;
+  }
+  .control-strip__items {
+    display: flex;
+    overflow: hidden;
+    transition:
+      width 0.25s ease,
+      opacity 0.2s ease;
+  }
+  .control-strip.collapsed .control-strip__items {
+    opacity: 0;
+    width: 0;
+  }
+  .control-strip__item {
+    align-items: center;
+    border-right: 1px solid hsl(var(--color-dark), 0.2);
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    justify-content: center;
+    padding: 8px 10px;
+    text-decoration: none;
+    width: 72px;
+  }
+  .control-strip__item img {
+    display: block;
+    height: auto;
+    width: 36px;
+  }
+  .control-strip__label {
+    color: hsl(var(--color-dark), 1);
+    font-family: var(--font-sans);
+    font-size: 0.65rem;
+    line-height: 1.15;
+    text-align: center;
+  }
+  @media (max-width: 420px) {
+    .control-strip__item {
+      padding: 6px 7px;
+      width: 58px;
+    }
+    .control-strip__item img {
+      width: 26px;
+    }
+    .control-strip__label {
+      font-size: 0.55rem;
+    }
+  }
+  .control-strip__item.active {
+    background-color: hsl(var(--color-selection), 1);
+    box-shadow: inset 1px 1px 3px hsla(0, 0%, 0%, 0.6);
+  }
+  .control-strip__item.active .control-strip__label {
+    color: hsl(var(--color-light), 1);
+  }
+</style>
+
+<script>
+  const strip = document.querySelector<HTMLElement>(".control-strip");
+  const tab = strip?.querySelector<HTMLElement>(".control-strip__tab");
+
+  tab?.addEventListener("click", () => {
+    const collapsed = strip!.classList.toggle("collapsed");
+    tab.setAttribute("aria-expanded", String(!collapsed));
+  });
+
+  const items = new Map<string, HTMLElement>();
+  document
+    .querySelectorAll<HTMLElement>(".control-strip__item[data-popup]")
+    .forEach((item) => {
+      const id = item.dataset.popup;
+      if (id) items.set(id, item);
+    });
+
+  window.addEventListener("wm:popup-toggle", (event) => {
+    const { id, isOpen } = (
+      event as CustomEvent<{ id: string; isOpen: boolean }>
+    ).detail;
+    items.get(id)?.classList.toggle("active", isOpen);
+  });
+</script>

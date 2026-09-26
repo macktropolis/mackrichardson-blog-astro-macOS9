@@ -254,22 +254,22 @@ CSS Only Modal Pop-up
 .popup {
     opacity: 0;
     pointer-events: none;
-    transition: 0.4s;
+    transition: opacity 0.4s;
     position: fixed;
     top: 0;
-    bottom: 0;
     left: 0;
-    right: 0;
-    background-color: hsla(0, 0%, 0%, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 2rem;
+    width: fit-content;
+    max-width: calc(100vw - 2rem);
+    max-height: calc(100vh - 2rem);
+    /* No z-index while closed -- WindowManager.astro's bringToFront() sets
+       one via inline style the moment a popup actually opens. Elevating it
+       unconditionally here would let closed-but-still-in-the-DOM content
+       (e.g. CategoryPicker's ul.picker li a, which has pointer-events: all)
+       sit above the rest of the page and intercept clicks. */
 }
-.popup:target {
+.popup.is-open {
     opacity: 1;
     pointer-events: all;
-    z-index: 10000;
 }
 .popup > div.card {
     animation: appear 3s 1;

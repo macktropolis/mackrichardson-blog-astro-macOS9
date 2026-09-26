@@ -13,7 +13,7 @@ const { version } = site;
 const headerTitle = "MackOS";
 ---
 
-<div class="card__wrapper">
+<div class="card__wrapper wm-drag" id="hero-window">
   <div class="card alt featured" id="about">
     <header class="card__header">
       <img
@@ -69,6 +69,19 @@ const headerTitle = "MackOS";
   .control.expand {
     opacity: 1 !important;
   }
+  /* Center as a floating window on the empty desktop from first paint --
+     the inset:0 + margin:auto trick centers a fixed-position box of a
+     capped-but-otherwise-content-sized width/height without transform, so
+     there's nothing for WindowManager's drag positioning (which sets
+     explicit left/top/margin:0) to fight with once dragging takes over. */
+  .card__wrapper.wm-drag {
+    height: fit-content;
+    inset: 0;
+    margin: auto;
+    max-height: calc(100vh - 2rem);
+    position: fixed;
+    width: min(700px, calc(100vw - 2rem));
+  }
   .card__wrapper {
     transition:
       opacity 0.25s ease,
@@ -117,7 +130,10 @@ const headerTitle = "MackOS";
 
 <script>
   // Click the close box to dismiss the MackOS 9.0 card, like closing a
-  // window. Client-side only -- it comes back on reload.
+  // window. It stays in the DOM (just faded out / non-interactive) rather
+  // than being removed, so WindowManager.astro can reopen it later --
+  // e.g. from the Control Strip or the Apple menu's "About Mack
+  // Richardson..." link.
   document.addEventListener("click", (event) => {
     const target = event.target;
     if (!(target instanceof Element)) return;
@@ -130,6 +146,5 @@ const headerTitle = "MackOS";
     if (!wrapper) return;
 
     wrapper.classList.add("closing");
-    setTimeout(() => wrapper.remove(), 250);
   });
 </script>
