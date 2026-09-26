@@ -34,6 +34,11 @@ const { author } = site;
             class="control collapse"
         />
         <a href="#" class="button">&nbsp;</a>
+        <a
+            href="/#hero-window"
+            class="button expand about-to-hero"
+            aria-label="MackOS 9.0">&nbsp;</a
+        >
     </header>
 
     <section class="card__content">
@@ -76,6 +81,9 @@ const { author } = site;
     </section>
 </div>
 <style>
+    .control.expand {
+        opacity: 1 !important;
+    }
     .card__content {
         display: grid;
         justify-content: center;
@@ -122,3 +130,22 @@ const { author } = site;
         margin: 2rem auto;
     }
 </style>
+
+<script>
+  // The expand box reopens the MackOS 9.0 window (WindowManager.astro
+  // already handles that generically for any /#hero-window link) and, as
+  // the reverse of that window's own expand box, closes this popup too --
+  // by clicking its own close box, so it goes through WindowManager's
+  // normal close path instead of poking the "is-open" class directly.
+  document.addEventListener("click", (event) => {
+    const target = event.target;
+    if (!(target instanceof Element)) return;
+    if (!target.closest(".about-to-hero")) return;
+
+    document
+      .querySelector<HTMLAnchorElement>(
+        "#popup1 .card__header > a.button:not(.expand):not(.about-to-hero)",
+      )
+      ?.click();
+  });
+</script>
