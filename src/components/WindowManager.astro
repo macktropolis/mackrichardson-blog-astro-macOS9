@@ -59,6 +59,13 @@
 <script>
   let topZ = 1000;
 
+  // SiteHeader.astro's menu bar is a fixed 28px strip pinned to the top of
+  // the viewport; windows are always stacked above it (z-index), so nothing
+  // stops one from being positioned or dragged underneath it unless we
+  // clamp `top` ourselves.
+  const MENU_BAR_HEIGHT = 28;
+  const MIN_WINDOW_TOP = MENU_BAR_HEIGHT;
+
   function bringToFront(win: HTMLElement) {
     topZ += 1;
     win.style.zIndex = String(topZ);
@@ -81,7 +88,10 @@
     const rect = win.getBoundingClientRect();
     const offset = cascade * 24;
     const left = Math.max(16, (window.innerWidth - rect.width) / 2 + offset);
-    const top = Math.max(16, (window.innerHeight - rect.height) / 2 + offset);
+    const top = Math.max(
+      MIN_WINDOW_TOP,
+      (window.innerHeight - rect.height) / 2 + offset,
+    );
     win.style.left = `${left}px`;
     win.style.top = `${top}px`;
   }
@@ -96,6 +106,14 @@
       // instead of starting a drag.
       if (event.target.closest("a.button")) return;
       if (event.button !== 0) return;
+
+      // Once the pointer clamps at MIN_WINDOW_TOP, it can keep moving past
+      // the window (e.g. up into the fixed menu bar) while still "down" --
+      // without this, the browser reads that as a text-selection drag and
+      // highlights whatever's under the cursor.
+      event.preventDefault();
+      const prevUserSelect = document.body.style.userSelect;
+      document.body.style.userSelect = "none";
 
       bringToFront(win);
 
@@ -113,9 +131,10 @@
 
       const onMove = (moveEvent: PointerEvent) => {
         win.style.left = `${origLeft + moveEvent.clientX - startX}px`;
-        win.style.top = `${origTop + moveEvent.clientY - startY}px`;
+        win.style.top = `${Math.max(MIN_WINDOW_TOP, origTop + moveEvent.clientY - startY)}px`;
       };
       const onUp = () => {
+        document.body.style.userSelect = prevUserSelect;
         window.removeEventListener("pointermove", onMove);
         window.removeEventListener("pointerup", onUp);
       };
