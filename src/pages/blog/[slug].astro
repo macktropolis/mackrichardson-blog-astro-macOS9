@@ -37,7 +37,7 @@ interface Props {
 }
 
 const { post } = Astro.props;
-const { title, description, date, category, tags, author, image } = post.data;
+const { title, description, date, category, tags, image } = post.data;
 const { url } = site;
 
 const { Content } = await render(post);
@@ -68,6 +68,11 @@ const postURL = url + "/blog/" + postSlug;
   page={category}
   postURL={postURL}
 >
+  <div
+    id="window-content"
+    data-window-id={`window-post-${postSlug}`}
+    data-window-title={title}
+  >
   <div id="slug">
     <main id="slug__post">
       <div class="card__wrapper">
@@ -81,12 +86,10 @@ const postURL = url + "/blog/" + postSlug;
               alt="Close"
             />
             <div class="title">
-              <h3 class="card__title">
-                <a href={`/category/${slugify(category)}/`} class="badge"
-                  >{category}</a
-                >
-              </h3>
-              <span class={`icon ${slugify(category)}`}>&nbsp;</span>
+              <h3 class="card__title">{title}</h3>
+              <span class={`icon ${slugify(category)}`} title={category}
+                >&nbsp;</span
+              >
             </div>
             <img
               src="/assets/images/title-bar-expand.png"
@@ -129,7 +132,14 @@ const postURL = url + "/blog/" + postSlug;
                     quality={80}
                   />
                 </section>
-                <h1>{title}</h1>
+                <h1>
+                  {title}
+                  <span class="hero-meta">
+                    <a href={`/category/${slugify(category)}/`}
+                      >{category}</a
+                    > &bull; {formatDate(date)}
+                  </span>
+                </h1>
               </header>
 
               <section id="content" class="post__content">
@@ -211,12 +221,6 @@ const postURL = url + "/blog/" + postSlug;
                 </section>
               </section>
             </article>
-            <section class="card__meta">
-              <p>
-                <a href={`/author/${slugify(author)}/`}>{author}</a>
-                &bull; Posted: {formatDate(date)}
-              </p>
-            </section>
           </section>
         </div>
       </div><!-- end: .card-wrapper -->
@@ -225,6 +229,7 @@ const postURL = url + "/blog/" + postSlug;
       <!-- <Comments /> -->
       <!-- <RelatedPosts {relatedPosts} /> -->
     </aside>
+  </div>
   </div>
 </Layout>
 
@@ -280,6 +285,17 @@ const postURL = url + "/blog/" + postSlug;
     width: 100%;
     z-index: 5;
   }
+  .card__content > article > header > h1 .hero-meta {
+    display: block;
+    font-size: 0.9rem;
+    font-weight: normal;
+    margin-top: 0.75rem;
+    opacity: 0.85;
+  }
+  .card__content > article > header > h1 .hero-meta a {
+    color: inherit;
+    pointer-events: all;
+  }
   #slug > main {
     padding-bottom: 0;
   }
@@ -292,12 +308,16 @@ const postURL = url + "/blog/" + postSlug;
     width: 100%;
   }
   #content {
+    background-color: hsl(var(--color-light), 1);
     display: flow-root;
     overflow-y: hidden;
     padding: 2rem;
     pointer-events: all;
     position: relative;
     z-index: 1;
+  }
+  #slug .card__content {
+    padding: 0;
   }
   #content a {
     color: hsl(var(--color-selection), 1);
@@ -331,6 +351,7 @@ const postURL = url + "/blog/" + postSlug;
   }
   #content p {
     margin-bottom: 2rem;
+    text-align: left;
   }
   #content p.center {
     text-align: center;
@@ -360,9 +381,13 @@ const postURL = url + "/blog/" + postSlug;
     line-height: 150%;
     margin-bottom: 2rem;
     padding-left: 1rem;
+    text-align: left;
   }
   #content li:last-of-type {
     margin-bottom: 0;
+  }
+  #content pre {
+    text-align: left;
   }
   #content :not(pre) code {
     background-color: hsl(var(--color-mid), 1);

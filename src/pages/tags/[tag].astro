@@ -2,15 +2,11 @@
 // library imports
 import { getCollection, type CollectionEntry } from "astro:content";
 
-// data imports
-// import * as site from "../../data/site.json";
-
 // layout imports
 import Layout from "../../layouts/Layout.astro";
 
 // component imports
-import Hero from "../../components/SectionHeader.astro";
-import PostCard from "../../components/PostCard.astro";
+import PostListWindow from "../../components/PostListWindow.astro";
 
 // utils imports
 import { slugify, formatBlogPosts } from "../../js/utils";
@@ -48,24 +44,15 @@ interface Props {
 
 const { tag } = Astro.params;
 const { posts, tagName } = Astro.props;
-const headerTitle = "Tags";
 const title = "Tagged '" + tagName + "'";
-const description = "Articles tagged with '" + tagName + "'";
 ---
 
 <Layout title={title} page={tagName}>
   <main>
-    <Hero
-      headerTitle={headerTitle}
-      title={title}
-      description={description}
-      category={headerTitle}
-      categorySlug="tags"
+    <PostListWindow
+      windowId={`window-tag-${tag}`}
+      windowTitle={`Tag: ${tagName}`}
+      posts={posts}
     />
-    {
-      posts.map((post) => (
-        <PostCard data={post.data} url={post.id} tagType="h2" />
-      ))
-    }
   </main>
 </Layout>

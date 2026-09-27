@@ -254,7 +254,7 @@ CSS Only Modal Pop-up
 .popup {
     opacity: 0;
     pointer-events: none;
-    transition: opacity 0.4s;
+    transition: opacity 0.15s;
     position: fixed;
     top: 0;
     left: 0;
@@ -272,7 +272,6 @@ CSS Only Modal Pop-up
     pointer-events: all;
 }
 .popup > div.card {
-    animation: appear 3s 1;
     align-self: inherit;
     max-width: 700px;
 }

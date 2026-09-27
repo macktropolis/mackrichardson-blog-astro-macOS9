@@ -1,0 +1,129 @@
+---
+// A single row in a Blog/Category/Tag list window: hero thumbnail on the
+// left, title/excerpt/category/date/Read More on the right, a thin
+// divider between rows. Poolsuite's Newsroom window is the visual
+// reference. `url` is the post's collection id (unslugified), matching
+// PostCard.astro's own prop convention.
+import { Image } from "astro:assets";
+
+// utils imports
+import { slugify, formatDate } from "../js/utils";
+
+interface Props {
+  data: any;
+  url: string;
+}
+
+const { data, url } = Astro.props;
+const { title, date, image, description, category } = data;
+const postHref = `/blog/${slugify(url)}/`;
+---
+
+<div class="post-row">
+  <a href={postHref} class="post-row__thumb" tabindex="-1" aria-hidden="true">
+    <Image
+      src={image.src}
+      alt=""
+      widths={[160, 320]}
+      sizes="120px"
+      format="webp"
+      quality={80}
+    />
+  </a>
+  <div class="post-row__body">
+    <a href={`/category/${slugify(category)}/`} class="post-row__category"
+      >{category}</a
+    >
+    <h3 class="post-row__title"><a href={postHref}>{title}</a></h3>
+    <p class="post-row__excerpt">{description}</p>
+    <div class="post-row__meta">
+      <span class="post-row__date">{formatDate(date)}</span>
+      <a href={postHref} class="button post-row__more">Read More</a>
+    </div>
+  </div>
+</div>
+
+<style>
+  .post-row {
+    border-bottom: 1px solid hsl(var(--color-dark), 0.2);
+    display: flex;
+    gap: 1rem;
+    padding: 1rem;
+  }
+  .post-row:last-child {
+    border-bottom: none;
+  }
+  .post-row__thumb {
+    display: block;
+    flex-shrink: 0;
+    height: 90px;
+    outline: 1px solid hsl(var(--color-dark), 0.5);
+    overflow: hidden;
+    width: 90px;
+  }
+  .post-row__thumb :global(img) {
+    display: block;
+    height: 100%;
+    object-fit: cover;
+    width: 100%;
+  }
+  .post-row__body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    min-width: 0;
+  }
+  .post-row__category {
+    color: hsl(var(--color-mid-2), 1);
+    font-size: 0.7rem;
+    font-weight: bold;
+    text-decoration: none;
+    text-transform: uppercase;
+  }
+  .post-row__category:hover {
+    text-decoration: underline;
+  }
+  .post-row__title {
+    font-size: 1.1rem;
+    line-height: 1.2;
+    margin: 0;
+  }
+  .post-row__title a {
+    color: hsl(var(--color-dark), 1);
+    text-decoration: none;
+  }
+  .post-row__title a:hover {
+    text-decoration: underline;
+  }
+  .post-row__excerpt {
+    color: hsl(var(--color-mid-2), 1);
+    font-size: 0.85rem !important;
+    line-height: 1.4;
+    margin: 0 !important;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+  .post-row__meta {
+    align-items: center;
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 0.25rem;
+  }
+  .post-row__date {
+    color: hsl(var(--color-mid-2), 1);
+    font-size: 0.75rem;
+  }
+  .post-row__more {
+    font-size: 0.75rem;
+    margin: 0 !important;
+    padding: 4px 10px !important;
+  }
+  @media (max-width: 500px) {
+    .post-row__thumb {
+      height: 64px;
+      width: 64px;
+    }
+  }
+</style>

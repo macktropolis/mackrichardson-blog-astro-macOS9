@@ -2,15 +2,11 @@
 // library imports
 import { getCollection, type CollectionEntry } from "astro:content";
 
-// data imports
-// import * as site from "../../data/site.json";
-
 // layout imports
 import Layout from "../../layouts/Layout.astro";
 
 // component imports
-import Hero from "../../components/SectionHeader.astro";
-import PostCard from "../../components/PostCard.astro";
+import PostListWindow from "../../components/PostListWindow.astro";
 
 // utils imports
 import { slugify, formatBlogPosts } from "../../js/utils";
@@ -39,32 +35,20 @@ export async function getStaticPaths() {
 interface Props {
   posts: CollectionEntry<"blog">[];
   categoryName: string;
-  title?: string;
-  description?: string;
 }
 
 const { category } = Astro.params;
 const { posts, categoryName } = Astro.props;
-const headerTitle = "Files";
-const categoryTitle = category ?? "More Article Categories";
 const title = categoryName + " Articles";
-const description = "";
 const categorySlug = slugify(categoryName);
 ---
 
 <Layout title={title} page={categoryName} categorySlug={categorySlug}>
   <main>
-    <Hero
-      headerTitle={headerTitle}
-      title={title}
-      description={description}
-      category={categoryName}
-      categorySlug={categorySlug}
+    <PostListWindow
+      windowId={`window-category-${category}`}
+      windowTitle={categoryName}
+      posts={posts}
     />
-    {
-      posts.map((post) => (
-        <PostCard data={post.data} url={post.id} tagType="h2" />
-      ))
-    }
   </main>
 </Layout>

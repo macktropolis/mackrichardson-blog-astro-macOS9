@@ -1,50 +1,35 @@
 ---
 import { getCollection, type CollectionEntry } from "astro:content";
 
-// data imports
-// import * as site from "../../data/site.json";
-
 //  layout imports
 import Layout from "../../layouts/Layout.astro";
 
 //  component imports
-import Hero from "../../components/SectionHeader.astro";
-import PostCard from "../../components/PostCard.astro";
+import PostListWindow from "../../components/PostListWindow.astro";
 
 //  utils imports
-import { slugify, formatBlogPosts } from "../../js/utils";
+import { formatBlogPosts } from "../../js/utils";
 
-// export formatted blog posts with pagination
-//@ts-ignore
-export async function getStaticPaths({ paginate }) {
-  const allPosts = await getCollection("blog");
-  const formattedPosts: CollectionEntry<"blog">[] = formatBlogPosts(allPosts);
-
-  return paginate(formattedPosts, {
-    // pageSize: 6,
-  });
+// A single window listing every post -- pagination isn't worth the added
+// complexity of a second window id per page while post count stays well
+// under Astro's paginate() default pageSize (10); the window scrolls
+// instead. Revisit if the blog grows past that.
+export async function getStaticPaths() {
+  return [{ params: { page: undefined } }];
 }
 
-interface Props {
-  posts: CollectionEntry<"blog">[];
-  authorName: string;
-  page?: string;
-}
-
-const { page } = Astro.props;
-const headerTitle = "Files";
+const allPosts = await getCollection("blog");
+const posts: CollectionEntry<"blog">[] = formatBlogPosts(allPosts);
 const title = "All Blog Articles";
 const description = "I write about comics, coding and everything in between.";
 ---
 
-<Layout title={title} page={headerTitle} description={description}>
+<Layout title={title} page="Files" description={description}>
   <main>
-    <Hero category={headerTitle} title={title} description={description} />
-    {
-      // @ts-ignore
-      page.data.map((post) => (
-        <PostCard data={post.data} url={post.id} tagType="h2" />
-      ))
-    }
+    <PostListWindow
+      windowId="window-blog"
+      windowTitle="Blog"
+      posts={posts}
+    />
   </main>
 </Layout>

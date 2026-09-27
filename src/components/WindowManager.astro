@@ -19,6 +19,41 @@
   .wm-drag .card__header {
     cursor: grab;
   }
+  .content-window__body {
+    max-height: calc(100vh - 2rem - 40px);
+    overflow-y: auto;
+  }
+  /* Pages like /blog/slug carry their own internal .card__header (with its
+     own close/expand controls and now the post title) from before they
+     could be opened as a window. Once nested inside the generated outer
+     chrome that duplicates it -- hide it rather than restructure markup
+     that a lot of existing CSS depends on. The outer header is a *sibling*
+     of .content-window__body, never inside it, so this can't match it. */
+  .content-window__body .card__header {
+    display: none;
+  }
+  /* Post windows read better wider than the 700px popups use (About,
+     Privacy, etc. via .popup > div.card { max-width: 700px }). */
+  .popup[id^="window-post-"] > .card {
+    max-width: 900px;
+  }
+  /* Long post titles would otherwise stretch the title bar or wrap; clip
+     to roughly 30 characters with an ellipsis instead. */
+  .popup[id^="window-post-"] .card__header h3 {
+    max-width: 30ch;
+    overflow: hidden;
+  }
+  /* Post windows: white chrome with no padding around the post's own
+     content area, so it fills the window edge-to-edge instead of sitting
+     in a gray inset frame. */
+  .popup[id^="window-post-"] > .card.alt {
+    background-color: hsl(var(--color-light), 1);
+    border: 2px solid hsl(var(--color-dark), 1);
+    box-shadow: 3px 3px 3px hsl(var(--color-dark), 1);
+  }
+  .popup[id^="window-post-"] .content-window__body {
+    padding: 0;
+  }
 </style>
 
 <script>
@@ -218,4 +253,176 @@
   }
   window.addEventListener("hashchange", handleHeroHash);
   handleHeroHash();
+
+  // -- Content windows: blog list, category list, tag list, single posts ---
+  //
+  // Unlike the popups above, there's no fixed set of these -- they're built
+  // on demand. Every target page (blog list, category list, tag list, post)
+  // renders its real content inside a #window-content element carrying
+  // data-window-id and data-window-title, so each one works as a normal,
+  // fully crawlable page with no JS. With JS, a page promotes its own
+  // #window-content into a floating window in place on load (no network
+  // round trip, no duplication); a click on a link to a *different* one of
+  // these pages fetches that page and extracts the same element instead of
+  // navigating. Either way the result is registered the same way, so a
+  // "Read More" link inside one fetched window opens another on top of it
+  // exactly like a link on the original page would.
+
+  const contentWindows = new Map<string, HTMLElement>();
+
+  function registerContentWindow(win: HTMLElement) {
+    makeDraggable(win);
+    const closeLink = win.querySelector<HTMLAnchorElement>(
+      ".card__header > a.button:not(.expand)",
+    );
+    closeLink?.addEventListener("click", (event) => {
+      event.preventDefault();
+      win.classList.remove("is-open");
+    });
+    win.addEventListener("pointerdown", () => bringToFront(win));
+    contentWindows.set(win.id, win);
+  }
+
+  function openWindowElement(win: HTMLElement) {
+    if (!win.classList.contains("is-open")) {
+      win.classList.add("is-open");
+      if (!win.dataset.positioned) {
+        const openCount = Array.from(contentWindows.values()).filter((w) =>
+          w.classList.contains("is-open"),
+        ).length;
+        centerWindow(win, openCount - 1);
+        win.dataset.positioned = "true";
+      }
+    }
+    bringToFront(win);
+  }
+
+  function buildWindowShell(id: string, titleText: string): HTMLElement {
+    const win = document.createElement("div");
+    win.className = "popup content-window";
+    win.id = id;
+    win.innerHTML = `
+      <div class="card alt featured">
+        <header class="card__header">
+          <img src="/assets/images/title-bar-close.png" height="28" width="28" class="control close" alt="Close" />
+          <div class="title">
+            <h3 class="card__title"></h3>
+          </div>
+          <img src="/assets/images/title-bar-expand.png" height="28" width="28" class="control expand" />
+          <img src="/assets/images/title-bar-collapse.png" height="28" width="28" class="control collapse" />
+          <a href="#" class="button" aria-label="Close">&nbsp;</a>
+        </header>
+        <section class="card__content content-window__body"></section>
+      </div>
+    `;
+    const titleEl = win.querySelector<HTMLElement>(".card__title");
+    if (titleEl) titleEl.textContent = titleText;
+    document.body.appendChild(win);
+    return win;
+  }
+
+  // Astro's per-component CSS (scoped via data-astro-cid-* attributes, or
+  // is:global) is bundled per page at build time -- it doesn't travel with
+  // a fetched HTML fragment on its own. The extracted markup keeps its
+  // data-astro-cid attributes, so copying over the source page's <style>
+  // tags (deduped by content, since e.g. every list page shares
+  // PostListRow's styles) makes them apply correctly once appended here.
+  const importedStyles = new Set<string>(
+    Array.from(document.querySelectorAll("style")).map(
+      (s) => s.textContent ?? "",
+    ),
+  );
+  function importStylesFrom(doc: Document) {
+    doc.querySelectorAll("style").forEach((style) => {
+      const css = style.textContent ?? "";
+      if (!css || importedStyles.has(css)) return;
+      importedStyles.add(css);
+      document.head.appendChild(style.cloneNode(true));
+    });
+  }
+
+  function promoteOwnContent() {
+    const source = document.getElementById("window-content");
+    if (!source) return;
+
+    const id = source.dataset.windowId;
+    const title = source.dataset.windowTitle;
+    if (!id || !title || contentWindows.has(id)) return;
+
+    const win = buildWindowShell(id, title);
+    const body = win.querySelector<HTMLElement>(".content-window__body")!;
+    while (source.firstChild) body.appendChild(source.firstChild);
+    source.remove();
+
+    registerContentWindow(win);
+    openWindowElement(win);
+  }
+
+  async function openContentWindowFromURL(id: string, url: string) {
+    const existing = contentWindows.get(id);
+    if (existing) {
+      openWindowElement(existing);
+      return;
+    }
+
+    let html: string;
+    try {
+      const response = await fetch(url);
+      if (!response.ok) {
+        location.href = url;
+        return;
+      }
+      html = await response.text();
+    } catch {
+      location.href = url;
+      return;
+    }
+
+    const doc = new DOMParser().parseFromString(html, "text/html");
+    const source = doc.getElementById("window-content");
+    if (!source) {
+      location.href = url;
+      return;
+    }
+    const title = source.dataset.windowTitle || doc.title;
+    importStylesFrom(doc);
+
+    const win = buildWindowShell(id, title);
+    const body = win.querySelector<HTMLElement>(".content-window__body")!;
+    body.innerHTML = source.innerHTML;
+
+    registerContentWindow(win);
+    openWindowElement(win);
+  }
+
+  function contentWindowIdForPath(path: string): string | null {
+    if (path === "/blog" || path === "/blog/") return "window-blog";
+    let match = path.match(/^\/category\/([^/]+)\/?$/);
+    if (match) return `window-category-${match[1]}`;
+    match = path.match(/^\/tags\/([^/]+)\/?$/);
+    if (match) return `window-tag-${match[1]}`;
+    match = path.match(/^\/blog\/([^/]+)\/?$/);
+    if (match) return `window-post-${match[1]}`;
+    return null;
+  }
+
+  document.addEventListener("click", (event) => {
+    if (!(event.target instanceof Element)) return;
+    if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey)
+      return;
+
+    const link = event.target.closest<HTMLAnchorElement>("a[href]");
+    if (!link || link.target === "_blank") return;
+
+    const href = link.getAttribute("href");
+    if (!href) return;
+    const path = href.split("#")[0].split("?")[0];
+    const id = contentWindowIdForPath(path);
+    if (!id) return;
+
+    event.preventDefault();
+    openContentWindowFromURL(id, path);
+  });
+
+  promoteOwnContent();
 </script>
