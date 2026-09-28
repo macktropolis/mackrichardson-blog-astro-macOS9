@@ -71,7 +71,8 @@ const postURL = url + "/blog/" + postSlug;
   <div
     id="window-content"
     data-window-id={`window-post-${postSlug}`}
-    data-window-title={title}
+    data-window-title={category}
+    data-window-icon={slugify(category)}
   >
   <div id="slug">
     <main id="slug__post">
@@ -134,11 +135,7 @@ const postURL = url + "/blog/" + postSlug;
                 </section>
                 <h1>
                   {title}
-                  <span class="hero-meta">
-                    <a href={`/category/${slugify(category)}/`}
-                      >{category}</a
-                    > &bull; {formatDate(date)}
-                  </span>
+                  <span class="hero-meta">{formatDate(date)}</span>
                 </h1>
               </header>
 
@@ -289,12 +286,8 @@ const postURL = url + "/blog/" + postSlug;
     display: block;
     font-size: 0.9rem;
     font-weight: normal;
-    margin-top: 0.75rem;
+    margin-top: 0.125rem;
     opacity: 0.85;
-  }
-  .card__content > article > header > h1 .hero-meta a {
-    color: inherit;
-    pointer-events: all;
   }
   #slug > main {
     padding-bottom: 0;

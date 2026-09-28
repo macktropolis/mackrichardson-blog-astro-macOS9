@@ -58,8 +58,7 @@ const headerTitle = "MackOS";
           and use this site to share projects, experiments, and things I've
           learned along the way.
         </p>
-        <a href="
-            #popup1" class="button primary">About Mack</a>
+        <a href="/about/" class="button primary">About Mack</a>
       </article>
     </section>
   </div>
@@ -70,15 +69,20 @@ const headerTitle = "MackOS";
     opacity: 1 !important;
   }
   /* Center as a floating window on the empty desktop from first paint --
-     the inset:0 + margin:auto trick centers a fixed-position box of a
+     the inset + margin:auto trick centers a fixed-position box of a
      capped-but-otherwise-content-sized width/height without transform, so
      there's nothing for WindowManager's drag positioning (which sets
-     explicit left/top/margin:0) to fight with once dragging takes over. */
+     explicit left/top/margin:0) to fight with once dragging takes over.
+     inset's 28px top reserves the fixed menu bar, matching WindowManager's
+     WINDOW_MARGIN clamp -- so even a window tall enough to hit max-height
+     keeps the same 24px-ish margin below the menu bar and above the
+     viewport's bottom edge that dragging/centering enforce everywhere else
+     (76px = 28px menu bar + 24px margin kept clear on both edges). */
   .card__wrapper.wm-drag {
     height: fit-content;
-    inset: 0;
+    inset: 28px 0 0 0;
     margin: auto;
-    max-height: calc(100vh - 2rem);
+    max-height: calc(100vh - 76px);
     position: fixed;
     width: min(700px, calc(100vw - 2rem));
   }

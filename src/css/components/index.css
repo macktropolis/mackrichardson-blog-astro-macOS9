@@ -89,7 +89,7 @@ Cards
     border: none;
     font-family: var(--font-sans);
     font-size: 1.1rem;
-    line-height: 100%;
+    line-height: 125%;
     margin: 0;
     padding: 0;
     text-overflow: ellipsis;
@@ -128,6 +128,12 @@ Cards
     font-size: 1.4rem;
     padding: 1rem;
     padding-bottom: 0;
+    /* .card__header is a fixed 40px above this; scrolling the content
+       instead of the whole .card keeps that header in view and stops
+       overflow from spilling past the .card's own max-height (76px = the
+       menu bar + margin budget above -- see .popup's max-height). */
+    max-height: calc(100vh - 76px - 40px);
+    overflow-y: auto;
 }
 .card__content article {
     background-color: hsl(var(--color-light, 1));  
@@ -260,7 +266,9 @@ CSS Only Modal Pop-up
     left: 0;
     width: fit-content;
     max-width: calc(100vw - 2rem);
-    max-height: calc(100vh - 2rem);
+    /* 76px = the 28px fixed menu bar + 24px margin WindowManager.astro's
+       WINDOW_MARGIN keeps clear above and below every window. */
+    max-height: calc(100vh - 76px);
     /* No z-index while closed -- WindowManager.astro's bringToFront() sets
        one via inline style the moment a popup actually opens. Elevating it
        unconditionally here would let closed-but-still-in-the-DOM content

@@ -20,6 +20,11 @@ const description =
 ---
 
 <Layout title={title} description={description} page={title}>
+  <div
+    id="window-content"
+    data-window-id="window-about"
+    data-window-title={`${title} ${author}`}
+  >
   <main>
     <div class="card__wrapper">
       <div class="card post">
@@ -173,6 +178,7 @@ const description =
       </div><!-- end: .card-wrapper -->
     </div>
   </main>
+  </div>
 </Layout>
 
 <style>

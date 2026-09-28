@@ -19,10 +19,6 @@
   .wm-drag .card__header {
     cursor: grab;
   }
-  .content-window__body {
-    max-height: calc(100vh - 2rem - 40px);
-    overflow-y: auto;
-  }
   /* Pages like /blog/slug carry their own internal .card__header (with its
      own close/expand controls and now the post title) from before they
      could be opened as a window. Once nested inside the generated outer
@@ -31,6 +27,80 @@
      of .content-window__body, never inside it, so this can't match it. */
   .content-window__body .card__header {
     display: none;
+  }
+  /* Every window gets an inset content frame -- previously only post
+     windows looked framed at all, and only by accident (their hero image
+     happens to have a hard edge; nothing else did). Putting the border
+     directly on .content-window__body, the same element that scrolls,
+     means the scrollbar renders flush against this border's inner edge
+     instead of out at the window's own outer edge. The margin is what
+     makes it read as a distinct inner frame rather than merging into the
+     outer shell's own border -- without it the two 2px borders just touch
+     and look like one slightly-thicker line. The margin (16px, both sides)
+     sits *outside* max-height's box, and the outer shell's own 2px border
+     (4px, both sides) is outside it too -- both need subtracting on top of
+     the general .card__content max-height in index.css (76px viewport
+     margin + 40px header), or a tall window ends up up to 20px closer to
+     the bottom of the viewport than WindowManager's own drag/centering
+     clamp allows. outline (rather than a second border) adds the white
+     highlight ring around the dark border without affecting box layout at
+     all -- no further max-height math needed for it, unlike the margin. */
+  .content-window__body {
+    background-color: hsl(var(--color-light), 1);
+    border: 2px solid hsl(var(--color-dark), 1);
+    outline: 1px solid hsl(var(--color-light), 1);
+    outline-offset: 0;
+    margin: 18px;
+    max-height: calc(100vh - 76px - 40px - 36px - 4px);
+  }
+  /* The gutter revealed by that margin is the outer shell's own
+     background showing through -- set it explicitly so every content
+     window's gutter matches, rather than leaving it to whatever .card.alt
+     (or the post-specific white override below) happened to set it to. */
+  .popup.content-window > .card {
+    background-color: hsl(var(--color-mid), 1);
+  }
+  /* Same story as the header above: the nested .card (e.g. .card.post from
+     blog/[slug].astro and about.astro) still carries the base .card's own
+     background/border/shadow from before it could be opened as a window,
+     which now just duplicates the outer chrome this file generates --
+     "a window within a window". Neutralize it here rather than restructure
+     markup that's also the page's real, fully-crawlable, no-JS content.
+     The white embossed .card__content article "paper" look underneath is
+     untouched -- only the outer box's own chrome is stripped. */
+  .content-window__body .card {
+    background: none;
+    border: none;
+    box-shadow: none;
+  }
+  /* The nested .card carries its own .card__content too (same double-chrome
+     situation as .card above) -- it's also a .card__content, so it picks up
+     the scrolling max-height/overflow-y from that rule in index.css, giving
+     two nested scrollbars (one on the outer content-window__body, one on
+     this inner box) with the outer's padding gap visible between them.
+     Only the outer one should scroll; let this one size to its content. */
+  .content-window__body .card__content {
+    max-height: none;
+    overflow-y: visible;
+    padding: 0;
+  }
+  /* And its padding: the nested page already brings its own internal
+     padding at a deeper level (e.g. about.astro's #content, the post's
+     #content), so the outer shell's own padding would just double it up as
+     a gap between the window edge and that inner padding. Only windows
+     that nest a .card need this -- the plain Blog/Category/Tag list
+     windows have no nested .card and still want the outer shell's padding
+     around their post rows. */
+  .content-window__body:has(.card) {
+    padding: 0;
+  }
+  /* The 10px added to the gutter above comes out of this padding to
+     compensate -- the plain Blog/Category/Tag list windows are the only
+     content windows with any padding left to reduce (index.css's
+     .card__content: 1rem/16px), since :has(.card) already zeroes it above
+     for the rest. */
+  .content-window__body:not(:has(.card)) {
+    padding: 6px 6px 0;
   }
   /* Post windows read better wider than the 700px popups use (About,
      Privacy, etc. via .popup > div.card { max-width: 700px }). */
@@ -43,16 +113,29 @@
     max-width: 30ch;
     overflow: hidden;
   }
-  /* Post windows: white chrome with no padding around the post's own
-     content area, so it fills the window edge-to-edge instead of sitting
-     in a gray inset frame. */
-  .popup[id^="window-post-"] > .card.alt {
+  /* Privacy and Holiday Cards get the same inset content frame as the
+     content windows above -- gutter, dark border, white highlight outline.
+     They're plain .popup markup (not built by buildWindowShell), so this
+     targets them directly by id rather than through .content-window__body.
+     An id selector reliably outranks each popup's own scoped .card__content
+     rule (padding, in both cases) regardless of source order, so padding is
+     the one thing intentionally left alone here -- unlike the list windows
+     above, there's no prior smaller gutter to size a matching reduction
+     against. */
+  #popup2 > .card,
+  #popup4 > .card {
+    background-color: hsl(var(--color-mid), 1);
+  }
+  #popup2 .card__content,
+  #popup4 .card__content {
     background-color: hsl(var(--color-light), 1);
     border: 2px solid hsl(var(--color-dark), 1);
-    box-shadow: 3px 3px 3px hsl(var(--color-dark), 1);
-  }
-  .popup[id^="window-post-"] .content-window__body {
-    padding: 0;
+    outline: 1px solid hsl(var(--color-light), 1);
+    outline-offset: 0;
+    margin: 18px;
+    /* Same 156px (76 + 40 + 36 + 4) budget as .content-window__body above --
+       menu bar + margin, header, this new gutter margin, this new border. */
+    max-height: calc(100vh - 76px - 40px - 36px - 4px);
   }
 </style>
 
@@ -62,9 +145,24 @@
   // SiteHeader.astro's menu bar is a fixed 28px strip pinned to the top of
   // the viewport; windows are always stacked above it (z-index), so nothing
   // stops one from being positioned or dragged underneath it unless we
-  // clamp `top` ourselves.
+  // clamp `top` ourselves. WINDOW_MARGIN is the breathing room every window
+  // keeps beyond that -- below the menu bar at the top, and above the
+  // viewport's own bottom edge -- so a window is never flush against
+  // either. The max-height calc()s in index.css (.popup), Hero.astro
+  // (.wm-drag) and below (.content-window__body) reserve the same
+  // MENU_BAR_HEIGHT + WINDOW_MARGIN*2 = 76px total budget; keep all four in
+  // sync if either constant changes.
   const MENU_BAR_HEIGHT = 28;
-  const MIN_WINDOW_TOP = MENU_BAR_HEIGHT;
+  const WINDOW_MARGIN = 24;
+  const MIN_WINDOW_TOP = MENU_BAR_HEIGHT + WINDOW_MARGIN;
+
+  // The lowest a window's top edge can sit while keeping WINDOW_MARGIN of
+  // clearance above the viewport's bottom edge, given its current height.
+  // Never lower than MIN_WINDOW_TOP -- a window taller than the available
+  // space clamps to the top instead of the bottom.
+  function maxWindowTop(height: number): number {
+    return Math.max(MIN_WINDOW_TOP, window.innerHeight - WINDOW_MARGIN - height);
+  }
 
   function bringToFront(win: HTMLElement) {
     topZ += 1;
@@ -88,9 +186,9 @@
     const rect = win.getBoundingClientRect();
     const offset = cascade * 24;
     const left = Math.max(16, (window.innerWidth - rect.width) / 2 + offset);
-    const top = Math.max(
-      MIN_WINDOW_TOP,
-      (window.innerHeight - rect.height) / 2 + offset,
+    const top = Math.min(
+      maxWindowTop(rect.height),
+      Math.max(MIN_WINDOW_TOP, (window.innerHeight - rect.height) / 2 + offset),
     );
     win.style.left = `${left}px`;
     win.style.top = `${top}px`;
@@ -131,7 +229,11 @@
 
       const onMove = (moveEvent: PointerEvent) => {
         win.style.left = `${origLeft + moveEvent.clientX - startX}px`;
-        win.style.top = `${Math.max(MIN_WINDOW_TOP, origTop + moveEvent.clientY - startY)}px`;
+        // WINDOW_MARGIN's extra breathing room is only for how a window
+        // opens/centers -- once the user is actively dragging it, it can
+        // go anywhere below the menu bar, including off the bottom edge.
+        const rawTop = origTop + moveEvent.clientY - startY;
+        win.style.top = `${Math.max(MENU_BAR_HEIGHT, rawTop)}px`;
       };
       const onUp = () => {
         document.body.style.userSelect = prevUserSelect;
@@ -316,7 +418,15 @@
     bringToFront(win);
   }
 
-  function buildWindowShell(id: string, titleText: string): HTMLElement {
+  // iconClass is one of the .icon.<slugified-category> classes in
+  // index.css (e.g. "coding") -- omitted entirely for window types (Blog,
+  // Category, Tag lists) that don't carry one, rather than falling back to
+  // the generic finder.png .icon default.
+  function buildWindowShell(
+    id: string,
+    titleText: string,
+    iconClass?: string,
+  ): HTMLElement {
     const win = document.createElement("div");
     win.className = "popup content-window";
     win.id = id;
@@ -336,6 +446,12 @@
     `;
     const titleEl = win.querySelector<HTMLElement>(".card__title");
     if (titleEl) titleEl.textContent = titleText;
+    if (iconClass) {
+      const icon = document.createElement("span");
+      icon.className = `icon ${iconClass}`;
+      icon.innerHTML = "&nbsp;";
+      win.querySelector(".title")?.appendChild(icon);
+    }
     document.body.appendChild(win);
     return win;
   }
@@ -366,9 +482,10 @@
 
     const id = source.dataset.windowId;
     const title = source.dataset.windowTitle;
+    const icon = source.dataset.windowIcon;
     if (!id || !title || contentWindows.has(id)) return;
 
-    const win = buildWindowShell(id, title);
+    const win = buildWindowShell(id, title, icon);
     const body = win.querySelector<HTMLElement>(".content-window__body")!;
     while (source.firstChild) body.appendChild(source.firstChild);
     source.remove();
@@ -404,9 +521,10 @@
       return;
     }
     const title = source.dataset.windowTitle || doc.title;
+    const icon = source.dataset.windowIcon;
     importStylesFrom(doc);
 
-    const win = buildWindowShell(id, title);
+    const win = buildWindowShell(id, title, icon);
     const body = win.querySelector<HTMLElement>(".content-window__body")!;
     body.innerHTML = source.innerHTML;
 
@@ -415,6 +533,7 @@
   }
 
   function contentWindowIdForPath(path: string): string | null {
+    if (path === "/about" || path === "/about/") return "window-about";
     if (path === "/blog" || path === "/blog/") return "window-blog";
     let match = path.match(/^\/category\/([^/]+)\/?$/);
     if (match) return `window-category-${match[1]}`;
