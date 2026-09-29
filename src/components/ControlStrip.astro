@@ -1,34 +1,40 @@
 ---
 // Mac OS 9 Control Strip: a compact, collapsible sitewide launcher for the
-// window popups, plus a real link to the blog. It reuses the exact
-// href="#popup1".."#popup4" convention WindowManager.astro already listens
-// for -- these are the same links used elsewhere (the Help menu's Privacy
-// Policy link, the media sidebar icons), just restyled as strip modules.
-// WindowManager toggles the window and announces the change; this
-// component only listens for that announcement to keep each module's
-// pressed/active look in sync.
+// window popups, plus a real link to the blog. Items with a `popup` id
+// reuse the exact href="#popup1".."#popup4" convention WindowManager.astro
+// already listens for -- these are the same links used elsewhere (the Help
+// menu's Privacy Policy link, the media sidebar icons), just restyled as
+// strip modules. WindowManager toggles the window and announces the
+// change; this component only listens for that announcement to keep each
+// module's pressed/active look in sync.
 //
 // "About Mack" is the odd one out: it opens the MackOS 9.0 window
 // (#hero-window) rather than the About popup, and isn't a toggle -- it
 // always ensures the window is open, so it has no `popup` id to sync an
 // active state against.
+//
+// Holiday Cards is hidden for now -- /holiday-cards/ still has the MacOS
+// window framing baked in, which doesn't make sense once it's opening in
+// its own tab rather than as a popup. Revisit once that page drops the
+// framing down to just the Christmas theme; restoring it also needs a
+// target={item.target} back on the <a> below, since no other item uses it:
+// {
+//   href: "/holiday-cards/",
+//   target: "_blank",
+//   title: "Holiday Cards",
+//   icon: "/assets/images/christmas-tree.png",
+// },
 // Alphabetized by title.
 const items = [
   {
     href: "/#hero-window",
     title: "About Mack",
-    icon: "/assets/images/m-logo.png",
+    icon: "/assets/images/mackos-finder.png",
   },
   {
     href: "/blog/",
     title: "Blog",
     icon: "/assets/images/book-red.png",
-  },
-  {
-    popup: "popup2",
-    href: "#popup2",
-    title: "Holiday Cards",
-    icon: "/assets/images/christmas-tree.png",
   },
   {
     popup: "popup3",
