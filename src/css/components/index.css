@@ -135,6 +135,75 @@ Cards
     max-height: calc(100vh - 76px - 40px);
     overflow-y: auto;
 }
+/* Classic Mac OS 9 scrollbar. Applies to .card__content (every window's own
+   scroll container) and pre (code blocks in post content, which get their
+   own horizontal scrollbar from Shiki's overflow-x: auto when a line runs
+   long, independent of the window's vertical one). Only WebKit/Blink
+   support styling scrollbars via pseudo-elements -- Firefox has no
+   equivalent, so it keeps its own native scrollbar there instead; setting
+   scrollbar-color/scrollbar-width to fake that tint would also make
+   Chromium switch to its standardized scrollbar renderer *on this same
+   element* and silently drop the ::-webkit-scrollbar-thumb styling below,
+   which is the one browser we're doing this for. The thumb is a flat fill
+   (--color-scrollbar, sampled from the reference scrollbar.png art) with an
+   inset shadow only on its right/bottom edges, reading as a light source
+   from the top-left the same way the site's buttons and window chrome do
+   elsewhere. There's no separate track/arrow-button art, so those are
+   flattened to a plain fill and hidden respectively rather than left as the
+   browser's native ones, which would clash. */
+.card__content::-webkit-scrollbar,
+pre::-webkit-scrollbar {
+    width: 28px;
+    height: 28px;
+}
+.card__content::-webkit-scrollbar-track,
+pre::-webkit-scrollbar-track {
+    background-color: hsl(var(--color-mid), 1);
+}
+.card__content::-webkit-scrollbar-track:vertical,
+pre::-webkit-scrollbar-track:vertical {
+    border-left: 2px solid hsl(var(--color-dark), 1);
+}
+.card__content::-webkit-scrollbar-track:horizontal,
+pre::-webkit-scrollbar-track:horizontal {
+    border-top: 2px solid hsl(var(--color-dark), 1);
+}
+.card__content::-webkit-scrollbar-corner,
+pre::-webkit-scrollbar-corner {
+    background-color: hsl(var(--color-mid), 1);
+}
+.card__content::-webkit-scrollbar-thumb,
+pre::-webkit-scrollbar-thumb {
+    background-color: hsl(var(--color-scrollbar), 1);
+    background-image: url("/assets/images/scroll-handle.png");
+    background-position: center;
+    background-repeat: no-repeat;
+    /* The thumb paints on top of the track, covering the track's own
+       border-left/border-top entirely since it otherwise fills the full
+       scrollbar box -- a transparent border the same width as that track
+       border, clipped out of the fill with background-clip, leaves a gap
+       the track's border shows through instead of hiding it. */
+    background-clip: padding-box;
+    box-shadow: inset -3px -3px 0 0 hsl(var(--color-dark), 0.4);
+    border: none;
+}
+.card__content::-webkit-scrollbar-thumb:vertical,
+pre::-webkit-scrollbar-thumb:vertical {
+    border-left: 2px solid transparent;
+}
+/* Chromium's scrollbar parts are natively painted, not ordinary boxes --
+   transform (and most other layout properties) is silently ignored on
+   them, so the horizontal grip needs its own pre-rotated art rather than
+   a rotate(90deg) on the vertical one. */
+.card__content::-webkit-scrollbar-thumb:horizontal,
+pre::-webkit-scrollbar-thumb:horizontal {
+    background-image: url("/assets/images/scroll-handle-horizontal.png");
+    border-top: 2px solid transparent;
+}
+.card__content::-webkit-scrollbar-button,
+pre::-webkit-scrollbar-button {
+    display: none;
+}
 .card__content article {
     background-color: hsl(var(--color-light, 1));  
     border: 2px solid hsl(var(--color-dark, 1));
@@ -295,10 +364,19 @@ CSS Only Modal Pop-up
 .popup > div.card.christmas .card__content {
     display: block;
     height: 100%;
+    /* This container just frames the iframe -- it should never scroll
+       itself (the iframe's own document handles its own scrolling).
+       Without this it inherits overflow-y: auto from the base
+       .card__content rule, and an iframe's default inline display leaves
+       a few px of baseline gap below it that's just enough to overflow
+       this container, so it grew a second, redundant scrollbar of its
+       own right alongside the iframe's native one. */
+    overflow: hidden;
     padding: 0;
     position: relative;
 }
 .popup > div.card.christmas .card__content iframe {
+    display: block;
     height: 100%;
     width: 100%;
 }
