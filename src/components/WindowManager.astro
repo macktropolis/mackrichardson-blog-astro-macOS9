@@ -330,6 +330,20 @@
   // -- Anything else opted into dragging (e.g. the Hero card) ---------------
 
   document.querySelectorAll<HTMLElement>(".wm-drag").forEach((win) => {
+    // #hero-window is authored inside <main>, which sets its own z-index
+    // stacking context (position: relative + z-index: 1 in index.css). A
+    // position: fixed descendant doesn't escape an ancestor's stacking
+    // context -- so no matter how high bringToFront sets its z-index, it
+    // was only ever competing for the single slot <main> occupies in
+    // <body>'s stacking order, always losing to popups/content windows,
+    // which buildWindowShell appends directly to <body>. Reparenting here
+    // puts it on the same footing as those, so z-index actually decides
+    // who's on top. The initial server-rendered position inside <main> is
+    // untouched -- this only runs once the page is interactive, so a
+    // no-JS visitor still gets it in its authored place in the flow.
+    if (win.parentElement !== document.body) {
+      document.body.appendChild(win);
+    }
     makeDraggable(win);
     win.addEventListener("pointerdown", () => bringToFront(win));
   });
